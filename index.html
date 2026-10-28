@@ -335,7 +335,61 @@ function makeQuery(lat, lon, segment) {
   return `[out:json][timeout:25];(${clauses});out center tags;`;
 }
 
+
 async function requestOverpass(query) {
+  const endpoints = [
+    'https://overpass.private.coffee/api/interpreter',
+    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    'https://overpass-api.de/api/interpreter'
+  ];
+
+  let lastError = null;
+
+  for (const endpoint of endpoints) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 25000);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: 'data=' + encodeURIComponent(query),
+        signal: controller.signal
+      });
+
+      if (response.status === 429) {
+        lastError = new Error('Limite de pesquisas atingido.');
+        continue;
+      }
+
+      if (!response.ok) {
+        lastError = new Error('Servidor respondeu HTTP ' + response.status);
+        continue;
+      }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data.elements)) {
+        throw new Error('Resposta inválida da fonte de dados.');
+      }
+
+      return data.elements;
+    } catch (error) {
+      lastError = error;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  throw new Error(
+    'Não foi possível acessar nenhuma fonte gratuita agora. ' +
+    'Aguarde um pouco e tente novamente. ' +
+    (lastError ? 'Detalhe: ' + lastError.message : '')
+  );
+}
+ {
   const endpoints = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
