@@ -287,6 +287,132 @@
   refreshSession();
 })();
 </script>
-<!-- FIM DO LOGIN PROSQAVO -->
+
+<!-- PROSQAVO LOGIN -->
+<section id="prosqavo-auth" style="max-width:440px;margin:30px auto;padding:24px;background:#111916;color:white;border:1px solid #294638;border-radius:16px;font-family:Arial,sans-serif;">
+  <h2>Acesse o Prosqavo</h2>
+  <p>Entre na sua conta ou crie uma gratuitamente.</p>
+
+  <form id="prosqavo-auth-form">
+    <label for="prosqavo-email">E-mail</label>
+    <input id="prosqavo-email" type="email" required autocomplete="email" style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="prosqavo-password">Senha</label>
+    <input id="prosqavo-password" type="password" minlength="6" required autocomplete="current-password" style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <button id="prosqavo-login-btn" type="submit">Entrar</button>
+    <button id="prosqavo-signup-btn" type="button">Criar conta</button>
+  </form>
+
+  <button id="prosqavo-logout-btn" type="button" hidden>Sair</button>
+  <p id="prosqavo-auth-message" role="status"></p>
+  <p id="prosqavo-user"></p>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
+
+  const $ = id => document.getElementById(id);
+  const message = $("prosqavo-auth-message");
+  const form = $("prosqavo-auth-form");
+  const login = $("prosqavo-login-btn");
+  const signup = $("prosqavo-signup-btn");
+  const logout = $("prosqavo-logout-btn");
+
+  function say(text) {
+    message.textContent = text;
+  }
+
+  if (!window.supabase) {
+    say("Erro: a biblioteca Supabase não carregou. Atualize a página e tente novamente.");
+    return;
+  }
+
+  if (SUPABASE_KEY === "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1") {
+    say("Erro: falta inserir sua chave pública do Supabase no código.");
+    return;
+  }
+
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  async function refresh() {
+    const { data, error } = await db.auth.getSession();
+    if (error) {
+      say("Erro ao verificar sessão: " + error.message);
+      return;
+    }
+
+    const user = data.session?.user;
+    $("prosqavo-user").textContent = user ? "Conectado: " + user.email : "";
+    logout.hidden = !user;
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    login.disabled = true;
+    say("Tentando entrar...");
+
+    try {
+      const { error } = await db.auth.signInWithPassword({
+        email: $("prosqavo-email").value.trim(),
+        password: $("prosqavo-password").value
+      });
+
+      if (error) {
+        say("Erro no login: " + error.message);
+      } else {
+        say("Login realizado!");
+        await refresh();
+      }
+    } catch (error) {
+      say("Erro de conexão: " + error.message);
+    } finally {
+      login.disabled = false;
+    }
+  });
+
+  signup.addEventListener("click", async function () {
+    const email = $("prosqavo-email").value.trim();
+    const password = $("prosqavo-password").value;
+
+    if (!email || password.length < 6) {
+      say("Informe um e-mail válido e uma senha com pelo menos 6 caracteres.");
+      return;
+    }
+
+    signup.disabled = true;
+    say("Criando conta...");
+
+    try {
+      const { data, error } = await db.auth.signUp({ email, password });
+
+      if (error) {
+        say("Erro no cadastro: " + error.message);
+      } else if (data.session) {
+        say("Conta criada e login realizado!");
+        await refresh();
+      } else {
+        say("Cadastro iniciado. Confira seu e-mail para confirmar a conta.");
+      }
+    } catch (error) {
+      say("Erro de conexão: " + error.message);
+    } finally {
+      signup.disabled = false;
+    }
+  });
+
+  logout.addEventListener("click", async function () {
+    const { error } = await db.auth.signOut();
+    say(error ? "Erro ao sair: " + error.message : "Você saiu da conta.");
+    await refresh();
+  });
+
+  refresh();
+})();
+</script>
+<!-- FIM PROSQAVO LOGIN -->
 </body>
 </html>
