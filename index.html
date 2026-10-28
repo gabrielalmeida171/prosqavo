@@ -3,75 +3,72 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#07110d">
-<meta name="description" content="Prosqavo — encontre empresas e organize seus leads comerciais.">
+<meta name="description" content="Prosqavo: encontre empresas e organize seus leads comerciais.">
 <title>Prosqavo — Prospecção B2B</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b14;--panel2:#10231a;--line:#203a2b;--green:#58e69a;--muted:#9aafa1;--text:#edf8f0;--red:#ff7777;--yellow:#f4d77a}
+:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b14;--line:#24402f;--green:#58e69a;--text:#edf8f0;--muted:#a0b5a6;--red:#ff8585}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,sans-serif}
-button,input,select,textarea{font:inherit}
+button,input,select{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
-.wrap{width:min(1100px,100%);margin:auto;padding:22px 16px 55px}
-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 0 25px}
-.logo{font-size:25px;font-weight:850;letter-spacing:-1px}.logo span{color:var(--green)}
-.small{font-size:12px;color:var(--muted)}
-h1{font-size:clamp(27px,5vw,42px);line-height:1.12;letter-spacing:-1.3px;margin:14px 0}
-h2{font-size:19px;margin:0 0 12px}
+button:disabled{opacity:.5;cursor:wait}
+.wrap{max-width:1080px;margin:auto;padding:18px 15px 50px}
+header,.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header{padding:10px 0 25px}
+.logo{font-size:26px;font-weight:850;letter-spacing:-1px}
+.logo span{color:var(--green)}
+h1{font-size:clamp(29px,5vw,43px);line-height:1.12;letter-spacing:-1.3px;margin:12px 0}
+h2{font-size:19px;margin:0 0 13px}
 p{color:var(--muted)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin:15px 0}
-.hero{padding:26px 0 12px;max-width:700px}
-.eyebrow{color:var(--green);font-weight:750;text-transform:uppercase;letter-spacing:1.4px;font-size:11px}
+.hero{padding:15px 0;max-width:720px}
+.eyebrow{color:var(--green);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:20px;margin:14px 0}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
 .field{display:flex;flex-direction:column;gap:6px}
 label{font-size:13px;color:#c9d9ce}
-input,select,textarea{width:100%;border:1px solid #2a4937;background:#08140d;color:var(--text);border-radius:10px;padding:12px;min-width:0}
-input:focus,select:focus,textarea:focus{outline:2px solid #397f58;border-color:var(--green)}
-.btn{border:1px solid var(--line);border-radius:10px;padding:11px 15px;background:#14271b;color:var(--text);font-weight:700}
-.btn.primary{background:var(--green);color:#062012;border-color:var(--green)}
+input,select{width:100%;min-width:0;background:#08140d;color:var(--text);border:1px solid #31503b;border-radius:10px;padding:12px}
+input:focus,select:focus{outline:2px solid #397f58}
+.btn{border:1px solid var(--line);border-radius:10px;padding:11px 14px;background:#15271b;color:var(--text);font-weight:700}
+.btn.primary{background:var(--green);color:#052012;border-color:var(--green)}
 .btn.danger{color:var(--red)}
-.btn.full{width:100%}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.status{white-space:pre-wrap;font-size:13px;color:var(--muted);margin-top:13px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.full{width:100%}
+.status{font-size:13px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}
 .status.error{color:var(--red)}.status.success{color:var(--green)}
+.meta,.small{font-size:12px;color:var(--muted)}
+.tag{display:inline-block;border:1px solid #315a40;color:var(--green);border-radius:20px;padding:3px 8px;font-size:11px}
 .hidden{display:none!important}
 .results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
-.company{border:1px solid var(--line);border-radius:14px;padding:15px;background:#09160f;min-width:0}
-.company h3{font-size:16px;margin:0 0 7px;overflow-wrap:anywhere}
-.company p{font-size:13px;margin:5px 0;overflow-wrap:anywhere}
+.company{background:#09160f;border:1px solid var(--line);border-radius:13px;padding:15px;min-width:0}
+.company h3{margin:0 0 8px;font-size:16px;overflow-wrap:anywhere}
+.company p{font-size:13px;margin:6px 0;overflow-wrap:anywhere}
 .company a{color:var(--green);overflow-wrap:anywhere}
-.tag{font-size:11px;color:var(--green);border:1px solid #2b5940;border-radius:20px;padding:3px 8px;display:inline-block;margin-bottom:8px}
-.meta{font-size:12px;color:var(--muted)}
-.separator{border:0;border-top:1px solid var(--line);margin:18px 0}
+.notice{background:#122219;border:1px solid #294733;border-radius:10px;padding:12px;font-size:12px;color:var(--muted);margin-top:15px}
 .lead{padding:13px 0;border-bottom:1px solid var(--line)}
 .lead:last-child{border-bottom:0}
-.notice{background:#122219;border:1px solid #294733;border-radius:10px;padding:12px;font-size:12px;color:var(--muted)}
-footer{text-align:center;padding:24px 0;color:var(--muted);font-size:12px}
-@media(max-width:650px){.grid,.results{grid-template-columns:1fr}.panel{padding:15px}.wrap{padding:12px 13px 40px}header{padding-bottom:10px}}
+.separator{border:0;border-top:1px solid var(--line);margin:17px 0}
+footer{text-align:center;padding:25px 0;color:var(--muted);font-size:12px}
+@media(max-width:620px){.grid,.results{grid-template-columns:1fr}.panel{padding:15px}.wrap{padding:12px 12px 40px}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <div class="logo">Prosq<span>avo</span></div>
-  <div id="headerAccount" class="small">Prospecção inteligente</div>
+  <div id="headerAccount" class="small">Prospecção B2B</div>
 </header>
 
 <section id="authSection">
   <div class="hero">
-    <div class="eyebrow">Prospecção B2B</div>
+    <div class="eyebrow">Prospecção inteligente</div>
     <h1>Encontre seus próximos clientes.</h1>
-    <p>Descubra empresas, organize oportunidades e construa sua lista de potenciais clientes em um só lugar.</p>
+    <p>Descubra empresas por segmento e cidade, salve oportunidades e organize seus leads em um só lugar.</p>
   </div>
   <div class="panel">
-    <div class="row">
-      <h2 id="authTitle">Entre na sua conta</h2>
-      <span class="tag">Prosqavo Free</span>
-    </div>
+    <h2 id="authTitle">Entre na sua conta</h2>
     <form id="authForm">
       <div class="field">
         <label for="authEmail">E-mail</label>
@@ -79,7 +76,7 @@ footer{text-align:center;padding:24px 0;color:var(--muted);font-size:12px}
       </div>
       <div class="field" style="margin-top:12px">
         <label for="authPassword">Senha</label>
-        <input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo de 6 caracteres">
+        <input id="authPassword" type="password" minlength="6" autocomplete="current-password" required placeholder="Mínimo de 6 caracteres">
       </div>
       <div class="actions">
         <button id="authSubmit" class="btn primary" type="submit">Entrar</button>
@@ -92,20 +89,21 @@ footer{text-align:center;padding:24px 0;color:var(--muted);font-size:12px}
 </section>
 
 <main id="appSection" class="hidden">
-  <section class="hero">
+  <div class="hero">
     <div class="eyebrow">Seu painel comercial</div>
-    <h1>Descubra empresas e gere oportunidades.</h1>
-    <p>Pesquise empresas brasileiras por segmento e cidade. Salve as melhores oportunidades na sua conta.</p>
-  </section>
+    <h1>Encontre empresas para prospectar.</h1>
+    <p>Escolha o segmento, o estado e o município. Depois, pesquise empresas reais e salve os leads que interessam.</p>
+  </div>
 
-  <div class="panel">
+  <section class="panel">
     <div class="row">
-      <h2>Buscar empresas</h2>
+      <h2>Pesquisa de empresas</h2>
       <span class="tag">Até 20 resultados</span>
     </div>
+
     <div class="grid">
       <div class="field">
-        <label for="category">Segmento</label>
+        <label for="category">Segmento de empresa</label>
         <select id="category">
           <option value="barbearias">Barbearias</option>
           <option value="restaurantes">Restaurantes</option>
@@ -116,49 +114,67 @@ footer{text-align:center;padding:24px 0;color:var(--muted);font-size:12px}
           <option value="hoteis">Hotéis e pousadas</option>
           <option value="farmacias">Farmácias</option>
           <option value="academias">Academias</option>
-          <option value="dentistas">Dentistas</option>
-          <option value="mercados">Mercados</option>
+          <option value="dentistas">Consultórios odontológicos</option>
+          <option value="mercados">Mercados e supermercados</option>
           <option value="petshops">Pet shops</option>
         </select>
       </div>
+
       <div class="field">
-        <label for="city">Cidade</label>
-        <input id="city" value="Rio das Ostras, RJ" required placeholder="Ex.: Rio das Ostras, RJ">
+        <label for="stateSelect">Estado brasileiro</label>
+        <select id="stateSelect" required>
+          <option value="">Carregando estados...</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="citySelect">Cidade / município</label>
+        <select id="citySelect" required disabled>
+          <option value="">Escolha primeiro o estado</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cityFilter">Filtrar cidades (opcional)</label>
+        <input id="cityFilter" type="search" placeholder="Digite parte do nome da cidade" disabled>
       </div>
     </div>
+
     <div class="actions">
       <button id="searchBtn" class="btn primary" type="button">Pesquisar empresas</button>
       <button id="clearResults" class="btn" type="button">Limpar resultados</button>
     </div>
+
     <div id="searchStatus" class="status" role="status" aria-live="polite"></div>
     <div id="quotaInfo" class="meta"></div>
     <div id="results" class="results"></div>
-    <div class="notice" style="margin-top:15px">
-      A busca utiliza dados públicos do OpenStreetMap. Telefone, e-mail e site aparecem somente quando cadastrados na fonte. Os resultados podem estar incompletos.
-    </div>
-  </div>
 
-  <div class="panel">
+    <div class="notice">
+      Os estados e municípios são carregados pela API gratuita do IBGE. A pesquisa de empresas utiliza o OpenStreetMap; os dados de contato só aparecem quando estão cadastrados na fonte.
+    </div>
+  </section>
+
+  <section class="panel">
     <div class="row">
       <h2>Meus leads salvos</h2>
-      <button id="refreshLeads" class="btn" type="button">Atualizar lista</button>
+      <button id="refreshLeads" class="btn" type="button">Atualizar</button>
     </div>
     <div id="leadsStatus" class="status" role="status"></div>
     <div id="leadsList"></div>
-  </div>
+  </section>
 
-  <div class="panel">
+  <section class="panel">
     <div class="row">
       <div>
         <h2>Sua conta</h2>
         <div id="accountEmail" class="meta"></div>
+        <div class="meta">Plano Free · 20 pesquisas mensais neste navegador</div>
       </div>
       <button id="logoutBtn" class="btn danger" type="button">Sair da conta</button>
     </div>
-    <hr class="separator">
-    <div class="meta">Plano atual: Free · Até 20 pesquisas mensais neste navegador.</div>
-  </div>
+  </section>
 </main>
+
 <footer>Prosqavo · Prospecção comercial</footer>
 </div>
 
@@ -166,32 +182,21 @@ footer{text-align:center;padding:24px 0;color:var(--muted);font-size:12px}
 (() => {
 "use strict";
 
-/* CONFIGURAÇÃO DO SUPABASE */
+/* CONEXÃO COM O SUPABASE */
 const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
-  }
-);
-
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
+
 const state = {
   user: null,
   authMode: "login",
   busy: false,
-  results: [],
-  savedIds: new Set()
+  municipalities: [],
+  results: []
 };
 
-/* CATEGORIAS E TAGS DO OPENSTREETMAP */
 const CATEGORIES = {
   barbearias: ['nwr["shop"="barber"]'],
   restaurantes: ['nwr["amenity"="restaurant"]'],
@@ -213,66 +218,172 @@ function setStatus(id, message, type = "") {
   el.className = "status" + (type ? " " + type : "");
 }
 
-function setBusy(value) {
-  state.busy = value;
-  $("searchBtn").disabled = value;
-  $("searchBtn").textContent = value ? "Pesquisando..." : "Pesquisar empresas";
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
     "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[c]));
+  }[char]));
 }
 
 function safeUrl(value) {
   try {
-    const url = new URL(value);
-    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+    const u = new URL(value);
+    return ["http:", "https:"].includes(u.protocol) ? u.href : "";
   } catch {
     return "";
   }
 }
 
-function normalizeWebsite(value) {
+function websiteUrl(value) {
   if (!value) return "";
   let v = String(value).trim();
   if (!/^https?:\/\//i.test(v)) v = "https://" + v;
   return safeUrl(v);
 }
 
-function getMonthlyUsage() {
-  const month = new Date().toISOString().slice(0, 7);
-  const key = "prosqavo_search_usage_v1";
+function friendlyError(error) {
+  const msg = error?.message || "Ocorreu um erro inesperado.";
+  if (/invalid login credentials/i.test(msg)) return "E-mail ou senha incorretos.";
+  if (/email not confirmed/i.test(msg)) return "Confirme seu e-mail antes de entrar.";
+  if (/already registered/i.test(msg)) return "Este e-mail já possui cadastro. Tente entrar.";
+  if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+    return "Falha de conexão. Confira a internet e tente novamente.";
+  }
+  return msg;
+}
+
+async function fetchTimed(url, options = {}, ms = 10000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
   try {
-    const data = JSON.parse(localStorage.getItem(key) || "{}");
-    if (data.month !== month) return {month, count: 0};
-    return {month, count: Number(data.count) || 0};
-  } catch {
-    return {month, count: 0};
+    return await fetch(url, {...options, signal: controller.signal});
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-function setMonthlyUsage(count) {
-  const usage = getMonthlyUsage();
-  localStorage.setItem("prosqavo_search_usage_v1", JSON.stringify({
-    month: usage.month,
-    count
-  }));
-  updateQuota();
+/* ESTADOS E MUNICÍPIOS DO BRASIL — API DO IBGE */
+async function loadStates() {
+  const select = $("stateSelect");
+  select.innerHTML = '<option value="">Carregando estados...</option>';
+
+  try {
+    const response = await fetchTimed(
+      "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome",
+      {headers: {"Accept":"application/json"}},
+      15000
+    );
+    if (!response.ok) throw new Error("Não foi possível carregar os estados.");
+    const states = await response.json();
+
+    select.innerHTML = '<option value="">Selecione um estado</option>';
+    states.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.sigla;
+      option.textContent = item.nome + " (" + item.sigla + ")";
+      select.appendChild(option);
+    });
+
+    // Seleciona RJ como ponto de partida, sem limitar as outras opções.
+    select.value = "RJ";
+    await loadMunicipalities("RJ");
+  } catch (error) {
+    select.innerHTML = '<option value="">Falha ao carregar estados</option>';
+    setStatus("searchStatus",
+      "Não foi possível carregar a lista do IBGE. Verifique a conexão e recarregue a página.",
+      "error");
+  }
 }
 
-function updateQuota() {
-  const usage = getMonthlyUsage();
-  $("quotaInfo").textContent =
-    `Plano Free: ${usage.count} de 20 pesquisas usadas neste mês neste navegador.`;
+async function loadMunicipalities(uf) {
+  const citySelect = $("citySelect");
+  const filter = $("cityFilter");
+
+  citySelect.disabled = true;
+  filter.disabled = true;
+  citySelect.innerHTML = '<option value="">Carregando municípios...</option>';
+  filter.value = "";
+  state.municipalities = [];
+
+  if (!uf) {
+    citySelect.innerHTML = '<option value="">Escolha primeiro o estado</option>';
+    return;
+  }
+
+  try {
+    const response = await fetchTimed(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${encodeURIComponent(uf)}/municipios?orderBy=nome`,
+      {headers: {"Accept":"application/json"}},
+      15000
+    );
+    if (!response.ok) throw new Error("Não foi possível carregar os municípios.");
+    const municipalities = await response.json();
+
+    state.municipalities = municipalities;
+    renderMunicipalityOptions("");
+
+    citySelect.disabled = false;
+    filter.disabled = false;
+
+    // Seleciona Rio das Ostras quando estiver disponível no RJ.
+    if (uf === "RJ") {
+      const rio = municipalities.find(m => m.nome.toLowerCase() === "rio das ostras");
+      if (rio) citySelect.value = String(rio.id);
+    }
+  } catch (error) {
+    citySelect.innerHTML = '<option value="">Erro ao carregar municípios</option>';
+    setStatus("searchStatus",
+      "Não foi possível carregar os municípios deste estado. Confira a internet e tente selecionar o estado novamente.",
+      "error");
+  }
 }
 
-/* AUTENTICAÇÃO */
+function renderMunicipalityOptions(filterText) {
+  const select = $("citySelect");
+  const uf = $("stateSelect").value;
+  const term = filterText.trim().toLocaleLowerCase("pt-BR");
+  const list = state.municipalities.filter(item =>
+    item.nome.toLocaleLowerCase("pt-BR").includes(term)
+  );
+
+  select.innerHTML = "";
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = list.length
+    ? "Selecione uma cidade"
+    : "Nenhuma cidade encontrada";
+  select.appendChild(placeholder);
+
+  list.forEach(item => {
+    const option = document.createElement("option");
+    option.value = String(item.id);
+    option.textContent = item.nome;
+    select.appendChild(option);
+  });
+
+  if (uf === "RJ" && !term) {
+    const rio = list.find(m => m.nome.toLowerCase() === "rio das ostras");
+    if (rio) select.value = String(rio.id);
+  }
+}
+
+$("stateSelect").addEventListener("change", async () => {
+  setStatus("searchStatus", "");
+  await loadMunicipalities($("stateSelect").value);
+});
+
+$("cityFilter").addEventListener("input", () => {
+  const previous = $("citySelect").value;
+  renderMunicipalityOptions($("cityFilter").value);
+  if ([...$("citySelect").options].some(o => o.value === previous)) {
+    $("citySelect").value = previous;
+  }
+});
+
+/* LOGIN, CADASTRO E RECUPERAÇÃO DE SENHA */
 function showAuth() {
   $("authSection").classList.remove("hidden");
   $("appSection").classList.add("hidden");
-  $("headerAccount").textContent = "Prospecção inteligente";
+  $("headerAccount").textContent = "Prospecção B2B";
 }
 
 function showApp() {
@@ -300,19 +411,18 @@ $("authForm").addEventListener("submit", async event => {
   event.preventDefault();
   const email = $("authEmail").value.trim();
   const password = $("authPassword").value;
-  const submit = $("authSubmit");
-  submit.disabled = true;
-  setStatus("authStatus", "Conectando à sua conta...");
+  $("authSubmit").disabled = true;
+  setStatus("authStatus", "Conectando...");
 
   try {
     if (state.authMode === "login") {
-      const {data, error} = await supabase.auth.signInWithPassword({email, password});
+      const {data, error} = await db.auth.signInWithPassword({email, password});
       if (error) throw error;
       state.user = data.user;
       showApp();
       await loadLeads();
     } else {
-      const {data, error} = await supabase.auth.signUp({email, password});
+      const {data, error} = await db.auth.signUp({email, password});
       if (error) throw error;
       if (data.session) {
         state.user = data.user;
@@ -320,110 +430,116 @@ $("authForm").addEventListener("submit", async event => {
         await loadLeads();
       } else {
         setStatus("authStatus",
-          "Cadastro enviado. Confira seu e-mail para confirmar a conta antes de entrar.",
+          "Cadastro criado. Confira seu e-mail para confirmar a conta e depois entre.",
           "success");
       }
     }
   } catch (error) {
     setStatus("authStatus", friendlyError(error), "error");
   } finally {
-    submit.disabled = false;
+    $("authSubmit").disabled = false;
   }
 });
 
 $("resetPassword").addEventListener("click", async () => {
   const email = $("authEmail").value.trim();
   if (!email) {
-    setStatus("authStatus", "Digite seu e-mail no campo acima.", "error");
+    setStatus("authStatus", "Digite seu e-mail primeiro.", "error");
     return;
   }
   try {
-    const {error} = await supabase.auth.resetPasswordForEmail(email, {
+    const {error} = await db.auth.resetPasswordForEmail(email, {
       redirectTo: location.origin + location.pathname
     });
     if (error) throw error;
-    setStatus("authStatus", "Se o e-mail estiver cadastrado, você receberá instruções para redefinir a senha.", "success");
+    setStatus("authStatus",
+      "Se o endereço estiver cadastrado, você receberá as instruções de recuperação.",
+      "success");
   } catch (error) {
     setStatus("authStatus", friendlyError(error), "error");
   }
 });
 
 $("logoutBtn").addEventListener("click", async () => {
-  const {error} = await supabase.auth.signOut();
+  const {error} = await db.auth.signOut();
   if (error) {
     setStatus("leadsStatus", friendlyError(error), "error");
     return;
   }
   state.user = null;
   state.results = [];
-  state.savedIds.clear();
   $("results").innerHTML = "";
   $("leadsList").innerHTML = "";
   showAuth();
 });
 
-function friendlyError(error) {
-  const msg = error?.message || "Ocorreu um erro inesperado.";
-  if (/invalid login credentials/i.test(msg)) return "E-mail ou senha incorretos.";
-  if (/email not confirmed/i.test(msg)) return "Confirme seu e-mail antes de entrar.";
-  if (/already registered/i.test(msg)) return "Este e-mail já possui cadastro. Tente entrar.";
-  if (/failed to fetch|network|fetch/i.test(msg)) return "Falha de conexão. Verifique sua internet e tente novamente.";
-  return msg;
-}
-
-/* LOCALIZAÇÃO DA CIDADE */
-async function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
+/* COTA LOCAL DO PLANO FREE */
+function usageData() {
+  const month = new Date().toISOString().slice(0, 7);
   try {
-    return await fetch(url, {...options, signal: controller.signal});
-  } finally {
-    clearTimeout(timer);
-  }
+    const old = JSON.parse(localStorage.getItem("prosqavo_usage_v2") || "{}");
+    if (old.month === month) return {month, count: Number(old.count) || 0};
+  } catch {}
+  return {month, count: 0};
 }
 
-async function locateCity(input) {
-  const query = input.trim();
-  if (query.length < 2) throw new Error("Informe uma cidade válida.");
+function updateQuota() {
+  const usage = usageData();
+  $("quotaInfo").textContent =
+    `Plano Free: ${usage.count} de 20 pesquisas usadas neste mês neste navegador.`;
+}
 
-  const urls = [
-    "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Brasil&q=" +
-      encodeURIComponent(query + ", Brasil"),
-    "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Brasil&q=" +
-      encodeURIComponent(query)
+/* PESQUISA DE EMPRESAS */
+async function findCityBounds(cityName, stateName) {
+  const queries = [
+    `${cityName}, ${stateName}, Brasil`,
+    `${cityName}, Brasil`
   ];
+  let lastError = null;
 
-  let lastError;
-  for (const url of urls) {
+  for (const query of queries) {
     try {
-      const response = await fetchWithTimeout(url, {
-        headers: {"Accept": "application/json"}
+      const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=br&q=" +
+        encodeURIComponent(query);
+      const response = await fetchTimed(url, {
+        headers: {"Accept":"application/json"}
       }, 10000);
-      if (!response.ok) throw new Error("Serviço de localização respondeu HTTP " + response.status);
-      const items = await response.json();
-      if (!Array.isArray(items) || !items.length) continue;
 
-      const item = items[0];
-      const box = item.boundingbox;
-      if (!Array.isArray(box) || box.length !== 4) {
-        throw new Error("Não foi possível obter os limites geográficos da cidade.");
-      }
+      if (!response.ok) throw new Error("Localização respondeu HTTP " + response.status);
+      const results = await response.json();
+      if (!results.length) continue;
+
+      const item = results[0];
+      if (!item.boundingbox || item.boundingbox.length !== 4) continue;
 
       return {
-        displayName: item.display_name || query,
-        south: Number(box[0]),
-        north: Number(box[1]),
-        west: Number(box[2]),
-        east: Number(box[3])
+        south: Number(item.boundingbox[0]),
+        north: Number(item.boundingbox[1]),
+        west: Number(item.boundingbox[2]),
+        east: Number(item.boundingbox[3]),
+        label: item.display_name || `${cityName}, ${stateName}`
       };
     } catch (error) {
       lastError = error;
     }
   }
-  throw lastError || new Error("Cidade não encontrada. Tente informar cidade e estado.");
+  throw lastError || new Error("Não encontrei a localização dessa cidade. Tente novamente.");
 }
 
-/* PESQUISA RÁPIDA NO OVERPASS */
+function buildOverpassQuery(category, bounds) {
+  const selectors = CATEGORIES[category];
+  if (!selectors) throw new Error("Selecione um segmento válido.");
+
+  const s = Math.min(bounds.south, bounds.north);
+  const n = Math.max(bounds.south, bounds.north);
+  const w = Math.min(bounds.west, bounds.east);
+  const e = Math.max(bounds.west, bounds.east);
+  const box = `(${s},${w},${n},${e})`;
+
+  // Sintaxe válida: não usar "out center tags 80".
+  return `[out:json][timeout:12];(${selectors.map(selector => selector + box + ";").join("")});out tags center;`;
+}
+
 async function queryOverpass(query) {
   const endpoints = [
     "https://overpass.private.coffee/api/interpreter",
@@ -432,11 +548,10 @@ async function queryOverpass(query) {
   const errors = [];
 
   for (let i = 0; i < endpoints.length; i++) {
-    setStatus("searchStatus",
-      `Etapa 2 de 2: consultando servidor ${i + 1} de ${endpoints.length}...`);
+    setStatus("searchStatus", `Pesquisando empresas: servidor ${i + 1} de ${endpoints.length}...`);
 
     try {
-      const response = await fetchWithTimeout(endpoints[i], {
+      const response = await fetchTimed(endpoints[i], {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
@@ -446,98 +561,76 @@ async function queryOverpass(query) {
       }, 12000);
 
       if (!response.ok) {
-        throw new Error("HTTP " + response.status);
+        const message = response.status === 429
+          ? "limite de requisições atingido"
+          : "servidor respondeu HTTP " + response.status;
+        throw new Error(message);
       }
 
       const data = await response.json();
       if (!Array.isArray(data.elements)) {
-        throw new Error("Resposta de dados inválida.");
+        throw new Error("Resposta inválida do servidor.");
       }
       return data;
     } catch (error) {
-      errors.push(
-        error.name === "AbortError"
-          ? "tempo limite excedido"
-          : error.message
-      );
+      errors.push(error.name === "AbortError"
+        ? "tempo limite excedido"
+        : error.message);
     }
   }
 
   throw new Error(
-    "Os servidores públicos não responderam a tempo. " +
-    "Tente novamente mais tarde. Detalhes: " + errors.join("; ")
+    "A pesquisa não conseguiu acessar os servidores públicos. " +
+    "Tente novamente em alguns minutos. (" + errors.join(" / ") + ")"
   );
 }
 
-function makeQuery(category, box) {
-  const south = Math.min(box.south, box.north);
-  const north = Math.max(box.south, box.north);
-  const west = Math.min(box.west, box.east);
-  const east = Math.max(box.west, box.east);
-
-  const bbox = `(${south},${west},${north},${east})`;
-  const selectors = CATEGORIES[category];
-  if (!selectors) throw new Error("Segmento não reconhecido.");
-
-  return `[out:json][timeout:15];(${selectors.map(s => s + bbox + ";").join("")});out center tags 80;`;
-}
-
-function elementCoordinates(element) {
-  if (element.lat != null && element.lon != null) {
-    return {lat: element.lat, lon: element.lon};
-  }
-  if (element.center) {
-    return {lat: element.center.lat, lon: element.center.lon};
-  }
-  return null;
-}
-
 function normalizeCompany(element) {
-  const tags = element.tags || {};
-  const coords = elementCoordinates(element);
-  const street = tags["addr:street"] || "";
-  const number = tags["addr:housenumber"] || "";
-  const suburb = tags["addr:suburb"] || tags["addr:neighbourhood"] || "";
-  const city = tags["addr:city"] || "";
-  const postcode = tags["addr:postcode"] || "";
+  const t = element.tags || {};
+  const center = element.center ||
+    (element.lat != null && element.lon != null
+      ? {lat: element.lat, lon: element.lon}
+      : null);
+
+  const street = t["addr:street"] || "";
+  const number = t["addr:housenumber"] || "";
+  const district = t["addr:suburb"] || t["addr:neighbourhood"] || "";
+  const city = t["addr:city"] || "";
+  const postcode = t["addr:postcode"] || "";
+
   const address = [
     street ? street + (number ? ", " + number : "") : "",
-    suburb,
-    city,
-    postcode
+    district, city, postcode
   ].filter(Boolean).join(" — ");
 
   return {
     id: `${element.type}/${element.id}`,
-    name: tags.name || tags.brand || tags.operator || "",
+    name: t.name || t.brand || t.operator || "",
     address: address || "Endereço não cadastrado",
-    phone: tags.phone || tags["contact:phone"] || tags["contact:mobile"] || "",
-    email: tags.email || tags["contact:email"] || "",
-    website: normalizeWebsite(tags.website || tags["contact:website"] || ""),
-    category: tags.shop || tags.amenity || tags.tourism || tags.leisure || "",
-    coords,
-    osmUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
-    rawTags: tags
+    phone: t.phone || t["contact:phone"] || t["contact:mobile"] || "",
+    email: t.email || t["contact:email"] || "",
+    website: websiteUrl(t.website || t["contact:website"] || ""),
+    coords: center,
+    osmUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`
   };
 }
 
-function deduplicate(items) {
+function uniqueCompanies(items) {
   const seen = new Set();
   return items.filter(item => {
-    const key = (item.name + "|" + item.address).toLowerCase();
+    const key = (item.name + "|" + item.address).toLocaleLowerCase("pt-BR");
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 }
 
-/* RENDERIZAÇÃO DOS RESULTADOS */
 function renderResults(items) {
   const root = $("results");
   root.innerHTML = "";
 
   if (!items.length) {
-    root.innerHTML = '<div class="company"><p>Nenhuma empresa encontrada nesta região com os dados disponíveis. Tente outro segmento ou cidade.</p></div>';
+    root.innerHTML = '<div class="company"><p>Nenhuma empresa com nome cadastrado foi encontrada. Experimente outro segmento ou município.</p></div>';
     return;
   }
 
@@ -545,38 +638,30 @@ function renderResults(items) {
     const card = document.createElement("article");
     card.className = "company";
 
-    const website = company.website
-      ? `<p>Site: <a href="${escapeHtml(company.website)}" target="_blank" rel="noopener noreferrer">${escapeHtml(company.website)}</a></p>`
-      : "";
-    const email = company.email
-      ? `<p>E-mail: <a href="mailto:${escapeHtml(company.email)}">${escapeHtml(company.email)}</a></p>`
-      : "";
     const phone = company.phone
-      ? `<p>Telefone: ${escapeHtml(company.phone)}</p>`
-      : "";
-    const mapLink = company.coords
+      ? `<p>Telefone: ${esc(company.phone)}</p>` : "";
+    const email = company.email
+      ? `<p>E-mail: <a href="mailto:${esc(company.email)}">${esc(company.email)}</a></p>` : "";
+    const website = company.website
+      ? `<p>Site: <a href="${esc(company.website)}" target="_blank" rel="noopener noreferrer">${esc(company.website)}</a></p>` : "";
+    const map = company.coords
       ? `<p><a href="https://www.openstreetmap.org/?mlat=${company.coords.lat}&mlon=${company.coords.lon}#map=17/${company.coords.lat}/${company.coords.lon}" target="_blank" rel="noopener noreferrer">Ver no mapa</a></p>`
-      : `<p><a href="${company.osmUrl}" target="_blank" rel="noopener noreferrer">Ver no OpenStreetMap</a></p>`;
+      : `<p><a href="${esc(company.osmUrl)}" target="_blank" rel="noopener noreferrer">Ver no OpenStreetMap</a></p>`;
 
     card.innerHTML = `
-      <span class="tag">Resultado ${index + 1}</span>
-      <h3>${escapeHtml(company.name || "Empresa sem nome cadastrado")}</h3>
-      <p>${escapeHtml(company.address)}</p>
-      ${phone}${email}${website}${mapLink}
-      <button class="btn primary full" type="button">Salvar lead</button>
-      <div class="status"></div>
-    `;
+      <span class="tag">Empresa ${index + 1}</span>
+      <h3>${esc(company.name)}</h3>
+      <p>${esc(company.address)}</p>
+      ${phone}${email}${website}${map}
+      <button type="button" class="btn primary full">Salvar lead</button>
+      <div class="status"></div>`;
 
     const button = card.querySelector("button");
     const status = card.querySelector(".status");
+
     button.addEventListener("click", async () => {
-      if (!company.name) {
-        status.textContent = "Esta empresa não possui nome cadastrado; não é possível salvá-la.";
-        status.className = "status error";
-        return;
-      }
       button.disabled = true;
-      status.textContent = "Salvando...";
+      status.textContent = "Salvando lead...";
       try {
         await saveLead(company);
         status.textContent = "Lead salvo na sua conta.";
@@ -588,6 +673,7 @@ function renderResults(items) {
         button.disabled = false;
       }
     });
+
     root.appendChild(card);
   });
 }
@@ -599,97 +685,92 @@ async function performSearch() {
   }
   if (state.busy) return;
 
-  const cityInput = $("city").value.trim();
-  const category = $("category").value;
-  if (!cityInput) {
-    setStatus("searchStatus", "Informe a cidade e o estado.", "error");
+  const uf = $("stateSelect").value;
+  const municipalityId = $("citySelect").value;
+  const city = state.municipalities.find(m => String(m.id) === municipalityId);
+  const stateOption = $("stateSelect").selectedOptions[0];
+  const stateName = stateOption ? stateOption.textContent.replace(/\s*\([A-Z]{2}\)$/, "") : "";
+
+  if (!uf || !city) {
+    setStatus("searchStatus", "Selecione um estado e uma cidade antes de pesquisar.", "error");
     return;
   }
 
-  const usage = getMonthlyUsage();
+  const usage = usageData();
   if (usage.count >= 20) {
-    setStatus("searchStatus",
-      "Você atingiu as 20 pesquisas deste mês no plano Free. O contador local será renovado no próximo mês.",
-      "error");
+    setStatus("searchStatus", "Você já utilizou as 20 pesquisas do plano Free neste navegador neste mês.", "error");
     return;
   }
 
-  setBusy(true);
+  state.busy = true;
+  $("searchBtn").disabled = true;
+  $("searchBtn").textContent = "Pesquisando...";
   $("results").innerHTML = "";
-  setStatus("searchStatus", "Etapa 1 de 2: localizando a cidade...");
+  setStatus("searchStatus", "Etapa 1 de 2: localizando " + city.nome + " — " + uf + "...");
 
   try {
-    const city = await locateCity(cityInput);
-    setStatus("searchStatus",
-      "Etapa 2 de 2: procurando empresas na região de " + city.displayName + ".");
+    const bounds = await findCityBounds(city.nome, stateName);
+    setStatus("searchStatus", "Etapa 2 de 2: buscando empresas em " + city.nome + " — " + uf + "...");
 
-    const query = makeQuery(category, city);
+    const query = buildOverpassQuery($("category").value, bounds);
     const data = await queryOverpass(query);
-    const items = deduplicate(
-      data.elements
-        .map(normalizeCompany)
-        .filter(company => company.name)
+    const items = uniqueCompanies(
+      data.elements.map(normalizeCompany).filter(company => company.name)
     ).slice(0, 20);
 
     state.results = items;
     renderResults(items);
-    setMonthlyUsage(usage.count + 1);
+
+    localStorage.setItem("prosqavo_usage_v2", JSON.stringify({
+      month: usage.month,
+      count: usage.count + 1
+    }));
+    updateQuota();
 
     setStatus("searchStatus",
       items.length
-        ? `${items.length} empresa(s) encontrada(s). Confira os dados e salve os leads desejados.`
-        : "A pesquisa terminou, mas não foram encontradas empresas com nome cadastrado.",
+        ? `Concluído: ${items.length} empresa(s) encontrada(s). Salve as oportunidades desejadas.`
+        : "A busca terminou, mas não encontrou empresas com nome cadastrado nessa área.",
       items.length ? "success" : "");
   } catch (error) {
-    setStatus("searchStatus",
-      error.name === "AbortError"
-        ? "A pesquisa demorou demais. Tente novamente."
-        : (error.message || "Falha na pesquisa. Tente novamente."),
-      "error");
+    setStatus("searchStatus", error.message || "A busca falhou. Tente novamente.", "error");
   } finally {
-    setBusy(false);
+    state.busy = false;
+    $("searchBtn").disabled = false;
+    $("searchBtn").textContent = "Pesquisar empresas";
   }
 }
 
 $("searchBtn").addEventListener("click", performSearch);
-$("city").addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    performSearch();
-  }
-});
 $("clearResults").addEventListener("click", () => {
   state.results = [];
   $("results").innerHTML = "";
   setStatus("searchStatus", "Resultados limpos.");
 });
 
-/* SALVAR E CARREGAR LEADS NO SUPABASE */
+/* LEADS NO SUPABASE */
 async function saveLead(company) {
-  if (!state.user) throw new Error("Entre na sua conta novamente.");
+  if (!state.user) throw new Error("Entre novamente na sua conta.");
 
   const notes = [
-    company.address ? "Endereço: " + company.address : "",
-    company.phone ? "Telefone: " + company.phone : "",
+    "Endereço: " + company.address,
     company.website ? "Site: " + company.website : "",
-    company.coords
-      ? `Coordenadas: ${company.coords.lat}, ${company.coords.lon}`
-      : "",
     company.osmUrl ? "Fonte: " + company.osmUrl : "",
-    "Segmento pesquisado: " + $("category").selectedOptions[0].textContent,
-    "Cidade pesquisada: " + $("city").value.trim()
+    "Segmento: " + $("category").selectedOptions[0].textContent,
+    "Município: " + $("citySelect").selectedOptions[0].textContent,
+    "Estado: " + $("stateSelect").value,
+    company.coords ? `Coordenadas: ${company.coords.lat}, ${company.coords.lon}` : ""
   ].filter(Boolean).join("\n");
 
-  const record = {
+  const {error} = await db.from("leads").insert({
     user_id: state.user.id,
     company_name: company.name,
     contact_name: null,
     email: company.email || null,
     phone: company.phone || null,
     notes
-  };
+  });
 
-  const {error} = await supabase.from("leads").insert(record);
   if (error) throw error;
   await loadLeads();
 }
@@ -698,8 +779,7 @@ async function loadLeads() {
   if (!state.user) return;
   setStatus("leadsStatus", "Carregando seus leads...");
 
-  const {data, error} = await supabase
-    .from("leads")
+  const {data, error} = await db.from("leads")
     .select("id,user_id,company_name,contact_name,email,phone,notes,created_at")
     .eq("user_id", state.user.id)
     .order("created_at", {ascending: false})
@@ -709,11 +789,8 @@ async function loadLeads() {
     setStatus("leadsStatus", friendlyError(error), "error");
     return;
   }
-
   renderLeads(data || []);
-  setStatus("leadsStatus",
-    `${(data || []).length} lead(s) carregado(s).`,
-    "success");
+  setStatus("leadsStatus", `${data.length} lead(s) carregado(s).`, "success");
 }
 
 function renderLeads(leads) {
@@ -721,32 +798,30 @@ function renderLeads(leads) {
   root.innerHTML = "";
 
   if (!leads.length) {
-    root.innerHTML = "<p>Você ainda não salvou nenhum lead. Faça uma pesquisa e salve as empresas que interessam.</p>";
+    root.innerHTML = "<p>Você ainda não salvou nenhum lead. Pesquise empresas e salve as que interessam.</p>";
     return;
   }
 
   leads.forEach(lead => {
     const item = document.createElement("div");
     item.className = "lead";
-
     const date = lead.created_at
       ? new Date(lead.created_at).toLocaleDateString("pt-BR")
       : "";
 
     item.innerHTML = `
       <div class="row">
-        <div style="min-width:0;flex:1">
-          <strong>${escapeHtml(lead.company_name || "Empresa sem nome")}</strong>
-          <div class="meta">${escapeHtml(date)}</div>
-          ${lead.contact_name ? `<div class="meta">Contato: ${escapeHtml(lead.contact_name)}</div>` : ""}
-          ${lead.phone ? `<div class="meta">Telefone: ${escapeHtml(lead.phone)}</div>` : ""}
-          ${lead.email ? `<div class="meta">E-mail: ${escapeHtml(lead.email)}</div>` : ""}
-          ${lead.notes ? `<details style="margin-top:6px"><summary class="meta" style="cursor:pointer">Ver detalhes</summary><p style="white-space:pre-wrap;font-size:12px">${escapeHtml(lead.notes)}</p></details>` : ""}
+        <div style="flex:1;min-width:0">
+          <strong>${esc(lead.company_name || "Empresa sem nome")}</strong>
+          <div class="meta">${esc(date)}</div>
+          ${lead.contact_name ? `<div class="meta">Contato: ${esc(lead.contact_name)}</div>` : ""}
+          ${lead.phone ? `<div class="meta">Telefone: ${esc(lead.phone)}</div>` : ""}
+          ${lead.email ? `<div class="meta">E-mail: ${esc(lead.email)}</div>` : ""}
+          ${lead.notes ? `<details style="margin-top:6px"><summary class="meta">Ver detalhes</summary><p style="white-space:pre-wrap;font-size:12px">${esc(lead.notes)}</p></details>` : ""}
         </div>
         <button class="btn danger" type="button">Excluir</button>
       </div>
-      <div class="status"></div>
-    `;
+      <div class="status"></div>`;
 
     const button = item.querySelector("button");
     const status = item.querySelector(".status");
@@ -755,12 +830,10 @@ function renderLeads(leads) {
       if (!confirm(`Excluir o lead "${lead.company_name}"?`)) return;
       button.disabled = true;
       try {
-        const {error} = await supabase
-          .from("leads")
+        const {error} = await db.from("leads")
           .delete()
           .eq("id", lead.id)
           .eq("user_id", state.user.id);
-
         if (error) throw error;
         item.remove();
         if (!root.children.length) {
@@ -773,14 +846,15 @@ function renderLeads(leads) {
         button.disabled = false;
       }
     });
+
     root.appendChild(item);
   });
 }
 
 $("refreshLeads").addEventListener("click", loadLeads);
 
-/* INICIALIZAÇÃO E RESTAURAÇÃO DA SESSÃO */
-supabase.auth.onAuthStateChange((event, session) => {
+/* INICIALIZAÇÃO */
+db.auth.onAuthStateChange((event, session) => {
   state.user = session?.user || null;
   if (state.user) {
     showApp();
@@ -792,9 +866,11 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 });
 
-(async function init() {
+async function init() {
   updateQuota();
-  const {data, error} = await supabase.auth.getSession();
+  loadStates();
+
+  const {data, error} = await db.auth.getSession();
   if (error) {
     setStatus("authStatus", friendlyError(error), "error");
     return;
@@ -806,7 +882,9 @@ supabase.auth.onAuthStateChange((event, session) => {
   } else {
     showAuth();
   }
-})();
+}
+
+init();
 })();
 </script>
 </body>
