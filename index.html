@@ -148,5 +148,145 @@
       results.appendChild(note);
     }
   </script>
+
+<!-- PROSQAVO - LOGIN SUPABASE -->
+<section id="prosqavo-auth" style="max-width:440px;margin:30px auto;padding:24px;background:#111916;color:white;border:1px solid #294638;border-radius:16px;font-family:Arial,sans-serif;">
+  <h2>Acesse o Prosqavo</h2>
+  <p>Entre na sua conta ou crie uma gratuitamente.</p>
+
+  <form id="prosqavo-auth-form">
+    <label for="prosqavo-email">E-mail</label>
+    <input id="prosqavo-email" type="email" required autocomplete="email" placeholder="seu@email.com" style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
+
+    <label for="prosqavo-password">Senha</label>
+    <input id="prosqavo-password" type="password" minlength="6" required autocomplete="current-password" placeholder="Mínimo de 6 caracteres" style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
+
+    <button type="submit" id="prosqavo-login-btn">Entrar</button>
+    <button type="button" id="prosqavo-signup-btn">Criar conta</button>
+  </form>
+
+  <button type="button" id="prosqavo-logout-btn" hidden>Sair da conta</button>
+  <p id="prosqavo-auth-message" role="status"></p>
+  <p id="prosqavo-user"></p>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+  const SUPABASE_URL = "COLE_SUA_PROJECT_URL_AQUI";
+  const SUPABASE_KEY = "COLE_SUA_CHAVE_PUBLICA_AQUI";
+
+  const message = document.getElementById("prosqavo-auth-message");
+  const userText = document.getElementById("prosqavo-user");
+  const form = document.getElementById("prosqavo-auth-form");
+  const loginButton = document.getElementById("prosqavo-login-btn");
+  const signupButton = document.getElementById("prosqavo-signup-btn");
+  const logoutButton = document.getElementById("prosqavo-logout-btn");
+
+  if (!window.supabase) {
+    message.textContent = "Falha ao carregar o Supabase. Verifique sua conexão.";
+    return;
+  }
+
+  if (SUPABASE_URL.includes("https://epbujrjcllihqvoytiev.supabase.co/rest/v1/") ||
+      SUPABASE_KEY.includes("sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1")) {
+    message.textContent = "Configure a URL e a chave pública do Supabase.";
+    return;
+  }
+
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function showMessage(text, error) {
+    message.textContent = text;
+    message.style.color = error ? "#ff8b8b" : "#75e6a0";
+  }
+
+  async function refreshSession() {
+    const { data, error } = await client.auth.getSession();
+
+    if (error) {
+      showMessage("Não foi possível verificar a sessão.", true);
+      return;
+    }
+
+    const user = data.session && data.session.user;
+
+    userText.textContent = user ? "Conectado: " + user.email : "";
+    logoutButton.hidden = !user;
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    loginButton.disabled = true;
+    signupButton.disabled = true;
+    showMessage("Entrando...", false);
+
+    const { error } = await client.auth.signInWithPassword({
+      email: document.getElementById("prosqavo-email").value.trim(),
+      password: document.getElementById("prosqavo-password").value
+    });
+
+    loginButton.disabled = false;
+    signupButton.disabled = false;
+
+    if (error) {
+      showMessage("Falha no login. Confira o e-mail, a senha e a confirmação do cadastro.", true);
+      return;
+    }
+
+    showMessage("Login realizado com sucesso!", false);
+    await refreshSession();
+  });
+
+  signupButton.addEventListener("click", async function () {
+    const email = document.getElementById("prosqavo-email").value.trim();
+    const password = document.getElementById("prosqavo-password").value;
+
+    if (!email || password.length < 6) {
+      showMessage("Informe um e-mail válido e uma senha com pelo menos 6 caracteres.", true);
+      return;
+    }
+
+    loginButton.disabled = true;
+    signupButton.disabled = true;
+    showMessage("Criando conta...", false);
+
+    const { data, error } = await client.auth.signUp({
+      email: email,
+      password: password
+    });
+
+    loginButton.disabled = false;
+    signupButton.disabled = false;
+
+    if (error) {
+      showMessage("Não foi possível criar a conta. Confira os dados.", true);
+      return;
+    }
+
+    if (data.session) {
+      showMessage("Conta criada e login realizado!", false);
+      await refreshSession();
+    } else {
+      showMessage("Cadastro iniciado! Confira seu e-mail para confirmar a conta.", false);
+    }
+  });
+
+  logoutButton.addEventListener("click", async function () {
+    const { error } = await client.auth.signOut();
+
+    if (error) {
+      showMessage("Não foi possível sair. Tente novamente.", true);
+      return;
+    }
+
+    showMessage("Você saiu da conta.", false);
+    await refreshSession();
+  });
+
+  refreshSession();
+})();
+</script>
+<!-- FIM DO LOGIN PROSQAVO -->
 </body>
 </html>
