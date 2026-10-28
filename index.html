@@ -4,106 +4,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#07110d">
-<meta name="description" content="Prosqavo: encontre empresas e organize seus leads comerciais.">
-<title>Prosqavo — Prospecção B2B</title>
+<meta name="theme-color" content="#0b1511">
+<meta name="description" content="Prosqavo — encontre empresas brasileiras e organize suas oportunidades comerciais.">
+<title>Prosqavo — Inteligência Comercial</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b14;--line:#24402f;--green:#58e69a;--text:#edf8f0;--muted:#a0b5a6;--red:#ff8585}
+:root {
+  color-scheme: dark;
+  --bg:#0b1511;
+  --panel:#111f18;
+  --panel2:#16271e;
+  --line:#293d31;
+  --green:#67e5a2;
+  --green2:#38c982;
+  --text:#f0f7f2;
+  --muted:#9aafa1;
+  --red:#ff9292;
+  --radius:18px;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 button,input,select{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.5;cursor:wait}
-.wrap{max-width:1080px;margin:auto;padding:18px 15px 50px}
-header,.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-header{padding:10px 0 25px}
-.logo{font-size:26px;font-weight:850;letter-spacing:-1px}
-.logo span{color:var(--green)}
-h1{font-size:clamp(29px,5vw,43px);line-height:1.12;letter-spacing:-1.3px;margin:12px 0}
-h2{font-size:19px;margin:0 0 13px}
-p{color:var(--muted)}
-.hero{padding:15px 0;max-width:720px}
-.eyebrow{color:var(--green);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:20px;margin:14px 0}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.field{display:flex;flex-direction:column;gap:6px}
-label{font-size:13px;color:#c9d9ce}
-input,select{width:100%;min-width:0;background:#08140d;color:var(--text);border:1px solid #31503b;border-radius:10px;padding:12px}
-input:focus,select:focus{outline:2px solid #397f58}
-.btn{border:1px solid var(--line);border-radius:10px;padding:11px 14px;background:#15271b;color:var(--text);font-weight:700}
-.btn.primary{background:var(--green);color:#052012;border-color:var(--green)}
+button:disabled{opacity:.55;cursor:wait}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+a{color:var(--green);overflow-wrap:anywhere}
+.wrap{width:min(1120px,100%);margin:auto;padding:0 20px 45px}
+header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #213329;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;font-size:24px;font-weight:850;letter-spacing:-1px}
+.brandmark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--green);color:#092015;font-weight:900;font-size:22px}
+.brand span{color:var(--green)}
+.account-pill{font-size:12px;color:#b5c8bb;background:#17271e;border:1px solid var(--line);padding:7px 11px;border-radius:30px}
+.hero{padding:35px 0 25px;max-width:760px}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.6px;color:var(--green);text-transform:uppercase}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.12;letter-spacing:-1.8px;margin:10px 0 13px}
+h2{font-size:19px;letter-spacing:-.4px;margin:0}
+p{color:var(--muted);margin:8px 0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:23px;margin:16px 0}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.subheading{color:var(--muted);font-size:13px;margin-top:5px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+label{font-size:13px;font-weight:650;color:#cbd9cf}
+input,select{width:100%;min-width:0;background:#0b1711;color:var(--text);border:1px solid #354b3c;border-radius:11px;padding:13px}
+select:disabled,input:disabled{opacity:.5}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:11px;padding:11px 15px;background:#192b20;color:var(--text);font-weight:700;transition:background .15s}
+.btn:hover:not(:disabled){background:#23392a}
+.btn.primary{background:var(--green);border-color:var(--green);color:#092015}
+.btn.primary:hover:not(:disabled){background:#8af0b7}
 .btn.danger{color:var(--red)}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.btn.ghost{background:transparent}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 .full{width:100%}
 .status{font-size:13px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}
-.status.error{color:var(--red)}.status.success{color:var(--green)}
-.meta,.small{font-size:12px;color:var(--muted)}
-.tag{display:inline-block;border:1px solid #315a40;color:var(--green);border-radius:20px;padding:3px 8px;font-size:11px}
+.status.error{color:var(--red)}
+.status.success{color:var(--green)}
+.tag{display:inline-flex;align-items:center;border:1px solid #315941;background:#13291d;color:var(--green);border-radius:30px;padding:5px 10px;font-size:11px;font-weight:750}
 .hidden{display:none!important}
-.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
-.company{background:#09160f;border:1px solid var(--line);border-radius:13px;padding:15px;min-width:0}
-.company h3{margin:0 0 8px;font-size:16px;overflow-wrap:anywhere}
-.company p{font-size:13px;margin:6px 0;overflow-wrap:anywhere}
-.company a{color:var(--green);overflow-wrap:anywhere}
-.notice{background:#122219;border:1px solid #294733;border-radius:10px;padding:12px;font-size:12px;color:var(--muted);margin-top:15px}
-.lead{padding:13px 0;border-bottom:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:3px 0 20px}
+.stat{padding:17px;border:1px solid var(--line);background:#101e16;border-radius:15px}
+.stat-label{color:var(--muted);font-size:12px}
+.stat-value{font-size:23px;font-weight:800;letter-spacing:-.5px;margin-top:4px}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:17px}
+.company{border:1px solid var(--line);background:#0e1a13;border-radius:15px;padding:17px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.company h3{font-size:16px;line-height:1.35;margin:3px 0;overflow-wrap:anywhere}
+.company p{font-size:13px;margin:0;overflow-wrap:anywhere}
+.company .tag{align-self:flex-start}
+.company .save{margin-top:auto}
+.empty{grid-column:1/-1;text-align:center;padding:28px 15px;border:1px dashed #34493a;border-radius:14px}
+.empty strong{display:block;margin-bottom:6px}
+.notice{font-size:12px;color:var(--muted);padding:13px 14px;background:#122219;border:1px solid #294733;border-radius:12px;margin-top:18px}
+.lead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}
 .lead:last-child{border-bottom:0}
-.separator{border:0;border-top:1px solid var(--line);margin:17px 0}
-footer{text-align:center;padding:25px 0;color:var(--muted);font-size:12px}
-@media(max-width:620px){.grid,.results{grid-template-columns:1fr}.panel{padding:15px}.wrap{padding:12px 12px 40px}}
+.lead-name{font-weight:750;overflow-wrap:anywhere}
+.lead-info{font-size:12px;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+.lead-actions{flex-shrink:0}
+.auth-wrap{max-width:470px;margin:30px auto 55px}
+.auth-wrap .hero{padding:15px 0}
+.auth-wrap .panel{padding:23px}
+.auth-form{display:grid;gap:15px}
+.quota{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:17px;font-size:12px;color:var(--muted)}
+.quota-track{height:5px;background:#29392e;border-radius:9px;overflow:hidden;margin-top:8px}
+.quota-fill{height:100%;width:0;background:var(--green);transition:width .2s}
+footer{text-align:center;color:#708678;font-size:12px;padding:30px 0 10px}
+@media(max-width:640px){
+ .wrap{padding:0 13px 32px}
+ header{height:66px}
+ .brand{font-size:22px}
+ .hero{padding:27px 0 18px}
+ .panel{padding:17px;margin:13px 0}
+ .grid,.results{grid-template-columns:1fr}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .stat{padding:13px}
+ .stat-value{font-size:20px}
+ .panelhead{align-items:flex-start}
+ .auth-wrap{margin:22px auto 40px}
+ .lead{gap:8px}
+ .lead-actions .btn{padding:9px}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="logo">Prosq<span>avo</span></div>
-  <div id="headerAccount" class="small">Prospecção B2B</div>
+  <div class="brand"><div class="brandmark">P</div><div>Prosq<span>avo</span></div></div>
+  <div id="headerAccount" class="account-pill">Inteligência comercial</div>
 </header>
 
-<section id="authSection">
+<section id="authSection" class="auth-wrap">
   <div class="hero">
     <div class="eyebrow">Prospecção inteligente</div>
-    <h1>Encontre seus próximos clientes.</h1>
-    <p>Descubra empresas por segmento e cidade, salve oportunidades e organize seus leads em um só lugar.</p>
+    <h1>Seus próximos clientes começam aqui.</h1>
+    <p>Encontre empresas, descubra oportunidades e organize seus contatos em um único lugar.</p>
   </div>
   <div class="panel">
-    <h2 id="authTitle">Entre na sua conta</h2>
-    <form id="authForm">
+    <div class="panelhead">
+      <div><h2 id="authTitle">Bem-vindo de volta</h2><div class="subheading">Acesse seu painel comercial.</div></div>
+      <span class="tag">Prosqavo</span>
+    </div>
+    <form id="authForm" class="auth-form">
       <div class="field">
         <label for="authEmail">E-mail</label>
         <input id="authEmail" type="email" autocomplete="email" required placeholder="voce@email.com">
       </div>
-      <div class="field" style="margin-top:12px">
+      <div class="field">
         <label for="authPassword">Senha</label>
         <input id="authPassword" type="password" minlength="6" autocomplete="current-password" required placeholder="Mínimo de 6 caracteres">
       </div>
-      <div class="actions">
-        <button id="authSubmit" class="btn primary" type="submit">Entrar</button>
-        <button id="toggleAuth" class="btn" type="button">Criar conta</button>
-        <button id="resetPassword" class="btn" type="button">Recuperar senha</button>
-      </div>
+      <button id="authSubmit" class="btn primary full" type="submit">Entrar na minha conta</button>
     </form>
+    <div class="actions">
+      <button id="toggleAuth" class="btn full" type="button">Criar conta gratuita</button>
+      <button id="resetPassword" class="btn ghost full" type="button">Esqueci minha senha</button>
+    </div>
     <div id="authStatus" class="status" role="status"></div>
   </div>
 </section>
 
 <main id="appSection" class="hidden">
-  <div class="hero">
-    <div class="eyebrow">Seu painel comercial</div>
+  <section class="hero">
+    <div class="eyebrow">Seu espaço comercial</div>
     <h1>Encontre empresas para prospectar.</h1>
-    <p>Escolha o segmento, o estado e o município. Depois, pesquise empresas reais e salve os leads que interessam.</p>
+    <p>Escolha um segmento e uma cidade para descobrir empresas cadastradas no OpenStreetMap.</p>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Plano atual</div><div class="stat-value">Free</div><div class="subheading">Pesquisa de empresas</div></div>
+    <div class="stat"><div class="stat-label">Limite indicativo mensal</div><div id="statQuota" class="stat-value">0 / 20</div><div class="subheading">Contagem neste navegador</div></div>
   </div>
 
-  <section class="panel">
-    <div class="row">
-      <h2>Pesquisa de empresas</h2>
+  <section class="panel" id="searchPanel">
+    <div class="panelhead">
+      <div><h2>Buscar empresas</h2><div class="subheading">Defina os filtros da sua prospecção.</div></div>
       <span class="tag">Até 20 resultados</span>
     </div>
-
     <div class="grid">
       <div class="field">
-        <label for="category">Segmento de empresa</label>
+        <label for="category">Segmento</label>
         <select id="category">
           <option value="barbearias">Barbearias</option>
           <option value="restaurantes">Restaurantes</option>
@@ -119,62 +176,47 @@ footer{text-align:center;padding:25px 0;color:var(--muted);font-size:12px}
           <option value="petshops">Pet shops</option>
         </select>
       </div>
-
       <div class="field">
-        <label for="stateSelect">Estado brasileiro</label>
-        <select id="stateSelect" required>
-          <option value="">Carregando estados...</option>
-        </select>
+        <label for="stateSelect">Estado</label>
+        <select id="stateSelect"><option value="">Carregando estados...</option></select>
       </div>
-
       <div class="field">
         <label for="citySelect">Cidade / município</label>
-        <select id="citySelect" required disabled>
-          <option value="">Escolha primeiro o estado</option>
-        </select>
+        <select id="citySelect" disabled><option value="">Escolha um estado</option></select>
       </div>
-
       <div class="field">
-        <label for="cityFilter">Filtrar cidades (opcional)</label>
-        <input id="cityFilter" type="search" placeholder="Digite parte do nome da cidade" disabled>
+        <label for="cityFilter">Filtrar lista de cidades</label>
+        <input id="cityFilter" type="search" placeholder="Digite o nome da cidade" disabled>
       </div>
     </div>
-
     <div class="actions">
-      <button id="searchBtn" class="btn primary" type="button">Pesquisar empresas</button>
+      <button id="searchBtn" class="btn primary" type="button">⌕ Pesquisar empresas</button>
       <button id="clearResults" class="btn" type="button">Limpar resultados</button>
     </div>
-
     <div id="searchStatus" class="status" role="status" aria-live="polite"></div>
-    <div id="quotaInfo" class="meta"></div>
+    <div class="quota"><span id="quotaInfo">Plano Free: 0 de 20 pesquisas usadas</span><span id="quotaPercent">0%</span></div>
+    <div class="quota-track"><div id="quotaFill" class="quota-fill"></div></div>
     <div id="results" class="results"></div>
-
-    <div class="notice">
-      Os estados e municípios são carregados pela API gratuita do IBGE. A pesquisa de empresas utiliza o OpenStreetMap; os dados de contato só aparecem quando estão cadastrados na fonte.
-    </div>
+    <div class="notice">A lista de estados e municípios vem da API do IBGE. As empresas vêm do OpenStreetMap e podem não conter telefone, e-mail ou site. A disponibilidade depende dos servidores públicos e dos dados cadastrados.</div>
   </section>
 
   <section class="panel">
-    <div class="row">
-      <h2>Meus leads salvos</h2>
-      <button id="refreshLeads" class="btn" type="button">Atualizar</button>
+    <div class="panelhead">
+      <div><h2>Meus leads</h2><div class="subheading">Empresas salvas na sua conta.</div></div>
+      <button id="refreshLeads" class="btn" type="button">↻ Atualizar</button>
     </div>
     <div id="leadsStatus" class="status" role="status"></div>
-    <div id="leadsList"></div>
+    <div id="leadsList"><div class="empty"><strong>Seus leads aparecerão aqui</strong><p>Pesquise empresas e salve as oportunidades que interessam.</p></div></div>
   </section>
 
   <section class="panel">
-    <div class="row">
-      <div>
-        <h2>Sua conta</h2>
-        <div id="accountEmail" class="meta"></div>
-        <div class="meta">Plano Free · 20 pesquisas mensais neste navegador</div>
-      </div>
+    <div class="panelhead">
+      <div><h2>Sua conta</h2><div id="accountEmail" class="subheading"></div></div>
       <button id="logoutBtn" class="btn danger" type="button">Sair da conta</button>
     </div>
+    <div class="notice">Seus leads continuam armazenados no Supabase. A contagem de pesquisas desta versão é local ao navegador e não é um limite seguro por usuário.</div>
   </section>
 </main>
-
 <footer>Prosqavo · Prospecção comercial</footer>
 </div>
 
@@ -182,708 +224,410 @@ footer{text-align:center;padding:25px 0;color:var(--muted);font-size:12px}
 (() => {
 "use strict";
 
-/* CONEXÃO COM O SUPABASE */
 const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
-
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 
 const state = {
-  user: null,
-  authMode: "login",
-  busy: false,
-  municipalities: [],
-  results: []
+  user:null, authMode:"login", busy:false,
+  municipalities:[], searchId:0
 };
 
 const CATEGORIES = {
-  barbearias: ['nwr["shop"="barber"]'],
-  restaurantes: ['nwr["amenity"="restaurant"]'],
-  padarias: ['nwr["shop"="bakery"]'],
-  saloes: ['nwr["shop"="hairdresser"]'],
-  oficinas: ['nwr["shop"="car_repair"]'],
-  cafes: ['nwr["amenity"="cafe"]'],
-  hoteis: ['nwr["tourism"="hotel"]','nwr["tourism"="guest_house"]'],
-  farmacias: ['nwr["amenity"="pharmacy"]'],
-  academias: ['nwr["leisure"="fitness_centre"]'],
-  dentistas: ['nwr["amenity"="dentist"]'],
-  mercados: ['nwr["shop"="supermarket"]','nwr["shop"="convenience"]'],
-  petshops: ['nwr["shop"="pet"]']
+  barbearias:['nwr["shop"="barber"]'],
+  restaurantes:['nwr["amenity"="restaurant"]'],
+  padarias:['nwr["shop"="bakery"]'],
+  saloes:['nwr["shop"="hairdresser"]'],
+  oficinas:['nwr["shop"="car_repair"]'],
+  cafes:['nwr["amenity"="cafe"]'],
+  hoteis:['nwr["tourism"="hotel"]','nwr["tourism"="guest_house"]'],
+  farmacias:['nwr["amenity"="pharmacy"]'],
+  academias:['nwr["leisure"="fitness_centre"]'],
+  dentistas:['nwr["amenity"="dentist"]'],
+  mercados:['nwr["shop"="supermarket"]','nwr["shop"="convenience"]'],
+  petshops:['nwr["shop"="pet"]']
 };
 
-function setStatus(id, message, type = "") {
-  const el = $(id);
-  el.textContent = message;
-  el.className = "status" + (type ? " " + type : "");
+function setStatus(id,message,type=""){
+  const el=$(id);
+  el.textContent=message;
+  el.className="status"+(type?" "+type:"");
 }
-
-function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[char]));
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-
-function safeUrl(value) {
-  try {
-    const u = new URL(value);
-    return ["http:", "https:"].includes(u.protocol) ? u.href : "";
-  } catch {
-    return "";
-  }
+function safeUrl(v){
+  try{const u=new URL(v);return ["http:","https:"].includes(u.protocol)?u.href:""}catch{return ""}
 }
-
-function websiteUrl(value) {
-  if (!value) return "";
-  let v = String(value).trim();
-  if (!/^https?:\/\//i.test(v)) v = "https://" + v;
-  return safeUrl(v);
+function websiteUrl(v){
+  if(!v)return "";
+  let s=String(v).trim();
+  if(!/^https?:\/\//i.test(s))s="https://"+s;
+  return safeUrl(s);
 }
-
-function friendlyError(error) {
-  const msg = error?.message || "Ocorreu um erro inesperado.";
-  if (/invalid login credentials/i.test(msg)) return "E-mail ou senha incorretos.";
-  if (/email not confirmed/i.test(msg)) return "Confirme seu e-mail antes de entrar.";
-  if (/already registered/i.test(msg)) return "Este e-mail já possui cadastro. Tente entrar.";
-  if (/failed to fetch|networkerror|load failed/i.test(msg)) {
-    return "Falha de conexão. Confira a internet e tente novamente.";
-  }
+function friendlyError(error){
+  const msg=error?.message||"Ocorreu um erro inesperado.";
+  if(/invalid login credentials/i.test(msg))return "E-mail ou senha incorretos.";
+  if(/email not confirmed/i.test(msg))return "Confirme seu e-mail antes de entrar.";
+  if(/already registered/i.test(msg))return "Este e-mail já possui cadastro. Tente entrar.";
+  if(/failed to fetch|networkerror|load failed/i.test(msg))return "Falha de conexão. Confira a internet e tente novamente.";
+  if(/column .* does not exist/i.test(msg))return "O banco informou uma coluna incompatível. Confira a estrutura da tabela leads.";
   return msg;
 }
-
-async function fetchTimed(url, options = {}, ms = 10000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), ms);
-  try {
-    return await fetch(url, {...options, signal: controller.signal});
-  } finally {
-    clearTimeout(timer);
-  }
+async function fetchTimed(url,options={},ms=18000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),ms);
+  try{return await fetch(url,{...options,signal:controller.signal})}
+  finally{clearTimeout(timer)}
 }
 
-/* ESTADOS E MUNICÍPIOS DO BRASIL — API DO IBGE */
-async function loadStates() {
-  const select = $("stateSelect");
-  select.innerHTML = '<option value="">Carregando estados...</option>';
-
-  try {
-    const response = await fetchTimed(
-      "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome",
-      {headers: {"Accept":"application/json"}},
-      15000
-    );
-    if (!response.ok) throw new Error("Não foi possível carregar os estados.");
-    const states = await response.json();
-
-    select.innerHTML = '<option value="">Selecione um estado</option>';
-    states.forEach(item => {
-      const option = document.createElement("option");
-      option.value = item.sigla;
-      option.textContent = item.nome + " (" + item.sigla + ")";
-      select.appendChild(option);
+/* ESTADOS E MUNICÍPIOS */
+async function loadStates(){
+  const select=$("stateSelect");
+  select.innerHTML='<option value="">Carregando estados...</option>';
+  try{
+    const r=await fetchTimed("https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome",{},18000);
+    if(!r.ok)throw new Error("Não foi possível carregar os estados.");
+    const list=await r.json();
+    select.innerHTML='<option value="">Selecione um estado</option>';
+    list.forEach(x=>{
+      const o=document.createElement("option");
+      o.value=x.sigla;o.textContent=x.nome+" ("+x.sigla+")";select.appendChild(o);
     });
-
-    // Seleciona RJ como ponto de partida, sem limitar as outras opções.
-    select.value = "RJ";
+    select.value="RJ";
     await loadMunicipalities("RJ");
-  } catch (error) {
-    select.innerHTML = '<option value="">Falha ao carregar estados</option>';
-    setStatus("searchStatus",
-      "Não foi possível carregar a lista do IBGE. Verifique a conexão e recarregue a página.",
-      "error");
+  }catch(e){
+    select.innerHTML='<option value="">Não foi possível carregar os estados</option>';
+    setStatus("searchStatus","Falha ao carregar estados pelo IBGE. Confira sua conexão e tente recarregar.","error");
   }
 }
-
-async function loadMunicipalities(uf) {
-  const citySelect = $("citySelect");
-  const filter = $("cityFilter");
-
-  citySelect.disabled = true;
-  filter.disabled = true;
-  citySelect.innerHTML = '<option value="">Carregando municípios...</option>';
-  filter.value = "";
-  state.municipalities = [];
-
-  if (!uf) {
-    citySelect.innerHTML = '<option value="">Escolha primeiro o estado</option>';
-    return;
-  }
-
-  try {
-    const response = await fetchTimed(
-      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${encodeURIComponent(uf)}/municipios?orderBy=nome`,
-      {headers: {"Accept":"application/json"}},
-      15000
-    );
-    if (!response.ok) throw new Error("Não foi possível carregar os municípios.");
-    const municipalities = await response.json();
-
-    state.municipalities = municipalities;
+async function loadMunicipalities(uf){
+  const select=$("citySelect"),filter=$("cityFilter");
+  select.disabled=true;filter.disabled=true;filter.value="";
+  select.innerHTML='<option value="">Carregando municípios...</option>';
+  state.municipalities=[];
+  if(!uf){select.innerHTML='<option value="">Escolha primeiro o estado</option>';return}
+  try{
+    const r=await fetchTimed("https://servicodados.ibge.gov.br/api/v1/localidades/estados/"+encodeURIComponent(uf)+"/municipios?orderBy=nome",{},18000);
+    if(!r.ok)throw new Error("Falha no IBGE");
+    state.municipalities=await r.json();
     renderMunicipalityOptions("");
-
-    citySelect.disabled = false;
-    filter.disabled = false;
-
-    // Seleciona Rio das Ostras quando estiver disponível no RJ.
-    if (uf === "RJ") {
-      const rio = municipalities.find(m => m.nome.toLowerCase() === "rio das ostras");
-      if (rio) citySelect.value = String(rio.id);
+    select.disabled=false;filter.disabled=false;
+    if(uf==="RJ"){
+      const rio=state.municipalities.find(x=>x.nome.toLowerCase()==="rio das ostras");
+      if(rio)select.value=String(rio.id);
     }
-  } catch (error) {
-    citySelect.innerHTML = '<option value="">Erro ao carregar municípios</option>';
-    setStatus("searchStatus",
-      "Não foi possível carregar os municípios deste estado. Confira a internet e tente selecionar o estado novamente.",
-      "error");
+  }catch(e){
+    select.innerHTML='<option value="">Falha ao carregar municípios</option>';
+    setStatus("searchStatus","Não foi possível carregar as cidades deste estado. Tente novamente.","error");
   }
 }
-
-function renderMunicipalityOptions(filterText) {
-  const select = $("citySelect");
-  const uf = $("stateSelect").value;
-  const term = filterText.trim().toLocaleLowerCase("pt-BR");
-  const list = state.municipalities.filter(item =>
-    item.nome.toLocaleLowerCase("pt-BR").includes(term)
-  );
-
-  select.innerHTML = "";
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = list.length
-    ? "Selecione uma cidade"
-    : "Nenhuma cidade encontrada";
+function renderMunicipalityOptions(term){
+  const select=$("citySelect"),uf=$("stateSelect").value;
+  const query=term.trim().toLocaleLowerCase("pt-BR");
+  const list=state.municipalities.filter(x=>x.nome.toLocaleLowerCase("pt-BR").includes(query));
+  select.innerHTML="";
+  const placeholder=document.createElement("option");
+  placeholder.value="";
+  placeholder.textContent=list.length?"Selecione uma cidade":"Nenhuma cidade encontrada";
   select.appendChild(placeholder);
-
-  list.forEach(item => {
-    const option = document.createElement("option");
-    option.value = String(item.id);
-    option.textContent = item.nome;
-    select.appendChild(option);
+  list.forEach(x=>{
+    const o=document.createElement("option");o.value=String(x.id);o.textContent=x.nome;select.appendChild(o);
   });
-
-  if (uf === "RJ" && !term) {
-    const rio = list.find(m => m.nome.toLowerCase() === "rio das ostras");
-    if (rio) select.value = String(rio.id);
+  if(uf==="RJ"&&!query){
+    const rio=list.find(x=>x.nome.toLowerCase()==="rio das ostras");
+    if(rio)select.value=String(rio.id);
   }
 }
-
-$("stateSelect").addEventListener("change", async () => {
-  setStatus("searchStatus", "");
-  await loadMunicipalities($("stateSelect").value);
-});
-
-$("cityFilter").addEventListener("input", () => {
-  const previous = $("citySelect").value;
+$("stateSelect").addEventListener("change",()=>loadMunicipalities($("stateSelect").value));
+$("cityFilter").addEventListener("input",()=>{
+  const old=$("citySelect").value;
   renderMunicipalityOptions($("cityFilter").value);
-  if ([...$("citySelect").options].some(o => o.value === previous)) {
-    $("citySelect").value = previous;
-  }
+  if([...$("citySelect").options].some(o=>o.value===old))$("citySelect").value=old;
 });
 
-/* LOGIN, CADASTRO E RECUPERAÇÃO DE SENHA */
-function showAuth() {
+/* LOGIN E CONTA */
+function showAuth(){
   $("authSection").classList.remove("hidden");
   $("appSection").classList.add("hidden");
-  $("headerAccount").textContent = "Prospecção B2B";
+  $("headerAccount").textContent="Inteligência comercial";
 }
-
-function showApp() {
+function showApp(){
   $("authSection").classList.add("hidden");
   $("appSection").classList.remove("hidden");
-  $("headerAccount").textContent = "Conta conectada";
-  $("accountEmail").textContent = state.user?.email || "";
+  $("headerAccount").textContent="Conta conectada";
+  $("accountEmail").textContent=state.user?.email||"";
   updateQuota();
 }
-
-function setAuthMode(mode) {
-  state.authMode = mode;
-  $("authTitle").textContent = mode === "login" ? "Entre na sua conta" : "Crie sua conta";
-  $("authSubmit").textContent = mode === "login" ? "Entrar" : "Criar conta";
-  $("toggleAuth").textContent = mode === "login" ? "Criar conta" : "Já tenho conta";
-  $("authPassword").autocomplete = mode === "login" ? "current-password" : "new-password";
-  setStatus("authStatus", "");
+function setAuthMode(mode){
+  state.authMode=mode;
+  $("authTitle").textContent=mode==="login"?"Bem-vindo de volta":"Crie sua conta gratuita";
+  $("authSubmit").textContent=mode==="login"?"Entrar na minha conta":"Criar minha conta";
+  $("toggleAuth").textContent=mode==="login"?"Criar conta gratuita":"Já tenho conta";
+  $("authPassword").autocomplete=mode==="login"?"current-password":"new-password";
+  setStatus("authStatus","");
 }
-
-$("toggleAuth").addEventListener("click", () => {
-  setAuthMode(state.authMode === "login" ? "signup" : "login");
-});
-
-$("authForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  const email = $("authEmail").value.trim();
-  const password = $("authPassword").value;
-  $("authSubmit").disabled = true;
-  setStatus("authStatus", "Conectando...");
-
-  try {
-    if (state.authMode === "login") {
-      const {data, error} = await db.auth.signInWithPassword({email, password});
-      if (error) throw error;
-      state.user = data.user;
-      showApp();
-      await loadLeads();
-    } else {
-      const {data, error} = await db.auth.signUp({email, password});
-      if (error) throw error;
-      if (data.session) {
-        state.user = data.user;
-        showApp();
-        await loadLeads();
-      } else {
-        setStatus("authStatus",
-          "Cadastro criado. Confira seu e-mail para confirmar a conta e depois entre.",
-          "success");
+$("toggleAuth").addEventListener("click",()=>setAuthMode(state.authMode==="login"?"signup":"login"));
+$("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const email=$("authEmail").value.trim(),password=$("authPassword").value;
+  $("authSubmit").disabled=true;
+  setStatus("authStatus","Conectando à sua conta...");
+  try{
+    if(state.authMode==="login"){
+      const {data,error}=await db.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      state.user=data.user;showApp();await loadLeads();
+    }else{
+      const {data,error}=await db.auth.signUp({email,password});
+      if(error)throw error;
+      if(data.session){
+        state.user=data.user;showApp();await loadLeads();
+      }else{
+        setStatus("authStatus","Cadastro iniciado. Confira seu e-mail para confirmar a conta e depois entre.","success");
       }
     }
-  } catch (error) {
-    setStatus("authStatus", friendlyError(error), "error");
-  } finally {
-    $("authSubmit").disabled = false;
-  }
+  }catch(err){setStatus("authStatus",friendlyError(err),"error")}
+  finally{$("authSubmit").disabled=false}
+});
+$("resetPassword").addEventListener("click",async()=>{
+  const email=$("authEmail").value.trim();
+  if(!email){setStatus("authStatus","Digite seu e-mail primeiro.","error");return}
+  try{
+    const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    if(error)throw error;
+    setStatus("authStatus","Se o endereço estiver cadastrado, você receberá as instruções de recuperação.","success");
+  }catch(e){setStatus("authStatus",friendlyError(e),"error")}
+});
+$("logoutBtn").addEventListener("click",async()=>{
+  const {error}=await db.auth.signOut();
+  if(error){setStatus("leadsStatus",friendlyError(error),"error");return}
+  state.user=null;showAuth();
 });
 
-$("resetPassword").addEventListener("click", async () => {
-  const email = $("authEmail").value.trim();
-  if (!email) {
-    setStatus("authStatus", "Digite seu e-mail primeiro.", "error");
-    return;
-  }
-  try {
-    const {error} = await db.auth.resetPasswordForEmail(email, {
-      redirectTo: location.origin + location.pathname
-    });
-    if (error) throw error;
-    setStatus("authStatus",
-      "Se o endereço estiver cadastrado, você receberá as instruções de recuperação.",
-      "success");
-  } catch (error) {
-    setStatus("authStatus", friendlyError(error), "error");
-  }
-});
-
-$("logoutBtn").addEventListener("click", async () => {
-  const {error} = await db.auth.signOut();
-  if (error) {
-    setStatus("leadsStatus", friendlyError(error), "error");
-    return;
-  }
-  state.user = null;
-  state.results = [];
-  $("results").innerHTML = "";
-  $("leadsList").innerHTML = "";
-  showAuth();
-});
-
-/* COTA LOCAL DO PLANO FREE */
-function usageData() {
-  const month = new Date().toISOString().slice(0, 7);
-  try {
-    const old = JSON.parse(localStorage.getItem("prosqavo_usage_v2") || "{}");
-    if (old.month === month) return {month, count: Number(old.count) || 0};
-  } catch {}
-  return {month, count: 0};
+/* CONTADOR LOCAL — NÃO É VALIDAÇÃO SEGURA NO SERVIDOR */
+function usageData(){
+  const month=new Date().toISOString().slice(0,7);
+  try{
+    const x=JSON.parse(localStorage.getItem("prosqavo_usage_v2")||"{}");
+    if(x.month===month)return {month,count:Math.max(0,Number(x.count)||0)};
+  }catch(e){}
+  return {month,count:0};
+}
+function updateQuota(){
+  const u=usageData(),pct=Math.min(100,u.count/20*100);
+  $("quotaInfo").textContent=`Plano Free: ${u.count} de 20 pesquisas usadas neste mês neste navegador.`;
+  $("statQuota").textContent=`${u.count} / 20`;
+  $("quotaPercent").textContent=Math.round(pct)+"%";
+  $("quotaFill").style.width=pct+"%";
 }
 
-function updateQuota() {
-  const usage = usageData();
-  $("quotaInfo").textContent =
-    `Plano Free: ${usage.count} de 20 pesquisas usadas neste mês neste navegador.`;
-}
-
-/* PESQUISA DE EMPRESAS */
-async function findCityBounds(cityName, stateName) {
-  const queries = [
-    `${cityName}, ${stateName}, Brasil`,
-    `${cityName}, Brasil`
-  ];
-  let lastError = null;
-
-  for (const query of queries) {
-    try {
-      const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=br&q=" +
-        encodeURIComponent(query);
-      const response = await fetchTimed(url, {
-        headers: {"Accept":"application/json"}
-      }, 10000);
-
-      if (!response.ok) throw new Error("Localização respondeu HTTP " + response.status);
-      const results = await response.json();
-      if (!results.length) continue;
-
-      const item = results[0];
-      if (!item.boundingbox || item.boundingbox.length !== 4) continue;
-
-      return {
-        south: Number(item.boundingbox[0]),
-        north: Number(item.boundingbox[1]),
-        west: Number(item.boundingbox[2]),
-        east: Number(item.boundingbox[3]),
-        label: item.display_name || `${cityName}, ${stateName}`
-      };
-    } catch (error) {
-      lastError = error;
-    }
+/* BUSCA REAL NO OPENSTREETMAP */
+async function findCityBounds(city,stateName){
+  const queries=[`${city}, ${stateName}, Brasil`,`${city}, Brasil`];
+  let errors=[];
+  for(const q of queries){
+    try{
+      const url="https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=br&q="+encodeURIComponent(q);
+      const r=await fetchTimed(url,{headers:{Accept:"application/json"}},18000);
+      if(!r.ok)throw new Error("Geolocalização HTTP "+r.status);
+      const list=await r.json();
+      if(!list.length)continue;
+      const b=list[0].boundingbox;
+      if(!b||b.length!==4)continue;
+      return {south:+b[0],north:+b[1],west:+b[2],east:+b[3]};
+    }catch(e){errors.push(e.name==="AbortError"?"tempo limite excedido":e.message)}
   }
-  throw lastError || new Error("Não encontrei a localização dessa cidade. Tente novamente.");
+  throw new Error("Não consegui localizar essa cidade nos servidores de mapas. "+errors.join(" / "));
 }
-
-function buildOverpassQuery(category, bounds) {
-  const selectors = CATEGORIES[category];
-  if (!selectors) throw new Error("Selecione um segmento válido.");
-
-  const s = Math.min(bounds.south, bounds.north);
-  const n = Math.max(bounds.south, bounds.north);
-  const w = Math.min(bounds.west, bounds.east);
-  const e = Math.max(bounds.west, bounds.east);
-  const box = `(${s},${w},${n},${e})`;
-
-  // Sintaxe válida: não usar "out center tags 80".
-  return `[out:json][timeout:12];(${selectors.map(selector => selector + box + ";").join("")});out tags center;`;
+function buildQuery(category,b){
+  const selectors=CATEGORIES[category];
+  if(!selectors)throw new Error("Selecione um segmento válido.");
+  const box=`(${Math.min(b.south,b.north)},${Math.min(b.west,b.east)},${Math.max(b.south,b.north)},${Math.max(b.west,b.east)})`;
+  return `[out:json][timeout:20];(${selectors.map(s=>s+box+";").join("")});out center;`;
 }
-
-async function queryOverpass(query) {
-  const endpoints = [
+async function queryOverpass(query){
+  const endpoints=[
     "https://overpass.private.coffee/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
     "https://overpass-api.de/api/interpreter"
   ];
-  const errors = [];
-
-  for (let i = 0; i < endpoints.length; i++) {
-    setStatus("searchStatus", `Pesquisando empresas: servidor ${i + 1} de ${endpoints.length}...`);
-
-    try {
-      const response = await fetchTimed(endpoints[i], {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-          "Accept": "application/json"
-        },
-        body: "data=" + encodeURIComponent(query)
-      }, 12000);
-
-      if (!response.ok) {
-        const message = response.status === 429
-          ? "limite de requisições atingido"
-          : "servidor respondeu HTTP " + response.status;
-        throw new Error(message);
-      }
-
-      const data = await response.json();
-      if (!Array.isArray(data.elements)) {
-        throw new Error("Resposta inválida do servidor.");
-      }
+  const errors=[];
+  for(let i=0;i<endpoints.length;i++){
+    setStatus("searchStatus",`Buscando empresas — tentativa ${i+1} de ${endpoints.length}...`);
+    try{
+      const r=await fetchTimed(endpoints[i],{
+        method:"POST",
+        headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8","Accept":"application/json"},
+        body:"data="+encodeURIComponent(query)
+      },25000);
+      if(!r.ok)throw new Error(r.status===429?"limite temporário de requisições":`servidor HTTP ${r.status}`);
+      const data=await r.json();
+      if(!Array.isArray(data.elements))throw new Error("Resposta inválida do servidor de mapas.");
       return data;
-    } catch (error) {
-      errors.push(error.name === "AbortError"
-        ? "tempo limite excedido"
-        : error.message);
-    }
+    }catch(e){errors.push(e.name==="AbortError"?"tempo limite excedido":e.message)}
   }
-
-  throw new Error(
-    "A pesquisa não conseguiu acessar os servidores públicos. " +
-    "Tente novamente em alguns minutos. (" + errors.join(" / ") + ")"
-  );
+  throw new Error("Os servidores públicos não responderam. Tente novamente mais tarde. "+errors.join(" / "));
 }
-
-function normalizeCompany(element) {
-  const t = element.tags || {};
-  const center = element.center ||
-    (element.lat != null && element.lon != null
-      ? {lat: element.lat, lon: element.lon}
-      : null);
-
-  const street = t["addr:street"] || "";
-  const number = t["addr:housenumber"] || "";
-  const district = t["addr:suburb"] || t["addr:neighbourhood"] || "";
-  const city = t["addr:city"] || "";
-  const postcode = t["addr:postcode"] || "";
-
-  const address = [
-    street ? street + (number ? ", " + number : "") : "",
-    district, city, postcode
-  ].filter(Boolean).join(" — ");
-
+function normalizeCompany(el){
+  const t=el.tags||{};
+  const coords=el.center||(el.lat!=null&&el.lon!=null?{lat:el.lat,lon:el.lon}:null);
+  const street=t["addr:street"]||"",number=t["addr:housenumber"]||"";
+  const district=t["addr:suburb"]||t["addr:neighbourhood"]||"";
+  const city=t["addr:city"]||"";
+  const address=[street?street+(number?", "+number:""):"",district,city].filter(Boolean).join(", ");
   return {
-    id: `${element.type}/${element.id}`,
-    name: t.name || t.brand || t.operator || "",
-    address: address || "Endereço não cadastrado",
-    phone: t.phone || t["contact:phone"] || t["contact:mobile"] || "",
-    email: t.email || t["contact:email"] || "",
-    website: websiteUrl(t.website || t["contact:website"] || ""),
-    coords: center,
-    osmUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`
+    id:`${el.type}/${el.id}`,
+    name:t.name||t.brand||t.operator||"",
+    address:address||"Endereço não cadastrado",
+    phone:t.phone||t["contact:phone"]||t["contact:mobile"]||"",
+    email:t.email||t["contact:email"]||"",
+    website:websiteUrl(t.website||t["contact:website"]||""),
+    coords,
+    osmUrl:`https://www.openstreetmap.org/${el.type}/${el.id}`
   };
 }
-
-function uniqueCompanies(items) {
-  const seen = new Set();
-  return items.filter(item => {
-    const key = (item.name + "|" + item.address).toLocaleLowerCase("pt-BR");
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
+function uniqueCompanies(items){
+  const seen=new Set();
+  return items.filter(x=>{
+    const k=(x.name+"|"+x.address).toLocaleLowerCase("pt-BR");
+    if(seen.has(k))return false;
+    seen.add(k);return true;
   });
 }
-
-function renderResults(items) {
-  const root = $("results");
-  root.innerHTML = "";
-
-  if (!items.length) {
-    root.innerHTML = '<div class="company"><p>Nenhuma empresa com nome cadastrado foi encontrada. Experimente outro segmento ou município.</p></div>';
+function renderResults(items){
+  const root=$("results");root.innerHTML="";
+  if(!items.length){
+    root.innerHTML='<div class="empty"><strong>Nenhuma empresa encontrada</strong><p>Tente outro segmento ou município. Nem todas as empresas estão cadastradas no OpenStreetMap.</p></div>';
     return;
   }
-
-  items.forEach((company, index) => {
-    const card = document.createElement("article");
-    card.className = "company";
-
-    const phone = company.phone
-      ? `<p>Telefone: ${esc(company.phone)}</p>` : "";
-    const email = company.email
-      ? `<p>E-mail: <a href="mailto:${esc(company.email)}">${esc(company.email)}</a></p>` : "";
-    const website = company.website
-      ? `<p>Site: <a href="${esc(company.website)}" target="_blank" rel="noopener noreferrer">${esc(company.website)}</a></p>` : "";
-    const map = company.coords
-      ? `<p><a href="https://www.openstreetmap.org/?mlat=${company.coords.lat}&mlon=${company.coords.lon}#map=17/${company.coords.lat}/${company.coords.lon}" target="_blank" rel="noopener noreferrer">Ver no mapa</a></p>`
-      : `<p><a href="${esc(company.osmUrl)}" target="_blank" rel="noopener noreferrer">Ver no OpenStreetMap</a></p>`;
-
-    card.innerHTML = `
-      <span class="tag">Empresa ${index + 1}</span>
-      <h3>${esc(company.name)}</h3>
-      <p>${esc(company.address)}</p>
-      ${phone}${email}${website}${map}
-      <button type="button" class="btn primary full">Salvar lead</button>
-      <div class="status"></div>`;
-
-    const button = card.querySelector("button");
-    const status = card.querySelector(".status");
-
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      status.textContent = "Salvando lead...";
-      try {
-        await saveLead(company);
-        status.textContent = "Lead salvo na sua conta.";
-        status.className = "status success";
-        button.textContent = "Salvo";
-      } catch (error) {
-        status.textContent = friendlyError(error);
-        status.className = "status error";
-        button.disabled = false;
+  items.forEach((c,i)=>{
+    const card=document.createElement("article");card.className="company";
+    const phone=c.phone?`<p>☎ ${esc(c.phone)}</p>`:"";
+    const email=c.email?`<p>✉ <a href="mailto:${esc(c.email)}">${esc(c.email)}</a></p>`:"";
+    const website=c.website?`<p>↗ <a href="${esc(c.website)}" target="_blank" rel="noopener noreferrer">Visitar site</a></p>`:"";
+    const map=c.coords?`<p><a href="https://www.openstreetmap.org/?mlat=${c.coords.lat}&mlon=${c.coords.lon}#map=17/${c.coords.lat}/${c.coords.lon}" target="_blank" rel="noopener noreferrer">Ver no mapa ↗</a></p>`:`<p><a href="${esc(c.osmUrl)}" target="_blank" rel="noopener noreferrer">Ver no OpenStreetMap ↗</a></p>`;
+    card.innerHTML=`<span class="tag">Resultado ${i+1}</span><h3>${esc(c.name)}</h3><p>${esc(c.address)}</p>${phone}${email}${website}${map}<button type="button" class="btn primary full save">Salvar lead</button><div class="status"></div>`;
+    const btn=card.querySelector("button"),status=card.querySelector(".status");
+    btn.addEventListener("click",async()=>{
+      btn.disabled=true;status.textContent="Salvando...";
+      try{
+        await saveLead(c);
+        status.textContent="Lead salvo na sua conta.";status.className="status success";btn.textContent="Salvo";
+      }catch(e){
+        status.textContent=friendlyError(e);status.className="status error";btn.disabled=false;
       }
     });
-
     root.appendChild(card);
   });
 }
-
-async function performSearch() {
-  if (!state.user) {
-    setStatus("searchStatus", "Entre na sua conta para pesquisar.", "error");
-    return;
-  }
-  if (state.busy) return;
-
-  const uf = $("stateSelect").value;
-  const municipalityId = $("citySelect").value;
-  const city = state.municipalities.find(m => String(m.id) === municipalityId);
-  const stateOption = $("stateSelect").selectedOptions[0];
-  const stateName = stateOption ? stateOption.textContent.replace(/\s*\([A-Z]{2}\)$/, "") : "";
-
-  if (!uf || !city) {
-    setStatus("searchStatus", "Selecione um estado e uma cidade antes de pesquisar.", "error");
-    return;
-  }
-
-  const usage = usageData();
-  if (usage.count >= 20) {
-    setStatus("searchStatus", "Você já utilizou as 20 pesquisas do plano Free neste navegador neste mês.", "error");
-    return;
-  }
-
-  state.busy = true;
-  $("searchBtn").disabled = true;
-  $("searchBtn").textContent = "Pesquisando...";
-  $("results").innerHTML = "";
-  setStatus("searchStatus", "Etapa 1 de 2: localizando " + city.nome + " — " + uf + "...");
-
-  try {
-    const bounds = await findCityBounds(city.nome, stateName);
-    setStatus("searchStatus", "Etapa 2 de 2: buscando empresas em " + city.nome + " — " + uf + "...");
-
-    const query = buildOverpassQuery($("category").value, bounds);
-    const data = await queryOverpass(query);
-    const items = uniqueCompanies(
-      data.elements.map(normalizeCompany).filter(company => company.name)
-    ).slice(0, 20);
-
-    state.results = items;
-    renderResults(items);
-
-    localStorage.setItem("prosqavo_usage_v2", JSON.stringify({
-      month: usage.month,
-      count: usage.count + 1
-    }));
+async function performSearch(){
+  if(!state.user){setStatus("searchStatus","Entre na sua conta para pesquisar.","error");return}
+  if(state.busy)return;
+  const uf=$("stateSelect").value,id=$("citySelect").value;
+  const city=state.municipalities.find(x=>String(x.id)===id);
+  const stateName=$("stateSelect").selectedOptions[0]?.textContent.replace(/\s*\([A-Z]{2}\)$/,"")||"";
+  if(!uf||!city){setStatus("searchStatus","Selecione um estado e uma cidade.","error");return}
+  const usage=usageData();
+  if(usage.count>=20){setStatus("searchStatus","Você atingiu as 20 pesquisas indicativas deste navegador neste mês.","error");return}
+  state.busy=true;$("searchBtn").disabled=true;$("searchBtn").textContent="Pesquisando...";
+  $("results").innerHTML="";
+  try{
+    setStatus("searchStatus",`Localizando ${city.nome} — ${uf}...`);
+    const bounds=await findCityBounds(city.nome,stateName);
+    const query=buildQuery($("category").value,bounds);
+    const data=await queryOverpass(query);
+    const companies=uniqueCompanies(data.elements.map(normalizeCompany).filter(x=>x.name)).slice(0,20);
+    renderResults(companies);
+    localStorage.setItem("prosqavo_usage_v2",JSON.stringify({month:usage.month,count:usage.count+1}));
     updateQuota();
-
-    setStatus("searchStatus",
-      items.length
-        ? `Concluído: ${items.length} empresa(s) encontrada(s). Salve as oportunidades desejadas.`
-        : "A busca terminou, mas não encontrou empresas com nome cadastrado nessa área.",
-      items.length ? "success" : "");
-  } catch (error) {
-    setStatus("searchStatus", error.message || "A busca falhou. Tente novamente.", "error");
-  } finally {
-    state.busy = false;
-    $("searchBtn").disabled = false;
-    $("searchBtn").textContent = "Pesquisar empresas";
+    setStatus("searchStatus",companies.length?`${companies.length} empresa(s) encontrada(s). Salve as oportunidades desejadas.`:"A pesquisa terminou, mas não encontrou empresas com nome cadastrado nessa área.",companies.length?"success":"");
+  }catch(e){
+    setStatus("searchStatus",friendlyError(e),"error");
+  }finally{
+    state.busy=false;$("searchBtn").disabled=false;$("searchBtn").textContent="⌕ Pesquisar empresas";
   }
 }
-
-$("searchBtn").addEventListener("click", performSearch);
-$("clearResults").addEventListener("click", () => {
-  state.results = [];
-  $("results").innerHTML = "";
-  setStatus("searchStatus", "Resultados limpos.");
+$("searchBtn").addEventListener("click",performSearch);
+$("clearResults").addEventListener("click",()=>{
+  $("results").innerHTML="";setStatus("searchStatus","Resultados limpos.");
 });
 
-/* LEADS NO SUPABASE */
-async function saveLead(company) {
-  if (!state.user) throw new Error("Entre novamente na sua conta.");
-
-  const notes = [
-    "Endereço: " + company.address,
-    company.website ? "Site: " + company.website : "",
-    company.osmUrl ? "Fonte: " + company.osmUrl : "",
-    "Segmento: " + $("category").selectedOptions[0].textContent,
-    "Município: " + $("citySelect").selectedOptions[0].textContent,
-    "Estado: " + $("stateSelect").value,
-    company.coords ? `Coordenadas: ${company.coords.lat}, ${company.coords.lon}` : ""
-  ].filter(Boolean).join("\n");
-
-  const {error} = await db.from("leads").insert({
-    user_id: state.user.id,
-    company_name: company.name,
-    contact_name: null,
-    email: company.email || null,
-    phone: company.phone || null,
-    notes
-  });
-
-  if (error) throw error;
+/* LEADS — UTILIZA APENAS COLUNAS IDENTIFICADAS NA TABELA */
+async function saveLead(company){
+  if(!state.user)throw new Error("Entre novamente na sua conta.");
+  const payload={
+    user_id:state.user.id,
+    company_name:company.name,
+    country:"Brasil",
+    city:$("citySelect").selectedOptions[0]?.textContent||"",
+    business_type:$("category").selectedOptions[0]?.textContent||"",
+    website:company.website||null,
+    email:company.email||null,
+    phone:company.phone||null
+  };
+  const {error}=await db.from("leads").insert(payload);
+  if(error)throw error;
   await loadLeads();
 }
-
-async function loadLeads() {
-  if (!state.user) return;
-  setStatus("leadsStatus", "Carregando seus leads...");
-
-  const {data, error} = await db.from("leads")
-    .select("id,user_id,company_name,contact_name,email,phone,notes,created_at")
-    .eq("user_id", state.user.id)
-    .order("created_at", {ascending: false})
+async function loadLeads(){
+  if(!state.user)return;
+  setStatus("leadsStatus","Carregando seus leads...");
+  const {data,error}=await db.from("leads")
+    .select("id,user_id,company_name,country,city,business_type,website,email,phone,status,created_at")
+    .eq("user_id",state.user.id)
+    .order("created_at",{ascending:false})
     .limit(500);
-
-  if (error) {
-    setStatus("leadsStatus", friendlyError(error), "error");
-    return;
-  }
-  renderLeads(data || []);
-  setStatus("leadsStatus", `${data.length} lead(s) carregado(s).`, "success");
+  if(error){setStatus("leadsStatus",friendlyError(error),"error");return}
+  renderLeads(data||[]);
+  setStatus("leadsStatus",`${data.length} lead(s) carregado(s).`,"success");
 }
-
-function renderLeads(leads) {
-  const root = $("leadsList");
-  root.innerHTML = "";
-
-  if (!leads.length) {
-    root.innerHTML = "<p>Você ainda não salvou nenhum lead. Pesquise empresas e salve as que interessam.</p>";
-    return;
+function renderLeads(leads){
+  const root=$("leadsList");root.innerHTML="";
+  if(!leads.length){
+    root.innerHTML='<div class="empty"><strong>Nenhum lead salvo ainda</strong><p>Pesquise empresas e salve as oportunidades que interessam.</p></div>';return;
   }
-
-  leads.forEach(lead => {
-    const item = document.createElement("div");
-    item.className = "lead";
-    const date = lead.created_at
-      ? new Date(lead.created_at).toLocaleDateString("pt-BR")
-      : "";
-
-    item.innerHTML = `
-      <div class="row">
-        <div style="flex:1;min-width:0">
-          <strong>${esc(lead.company_name || "Empresa sem nome")}</strong>
-          <div class="meta">${esc(date)}</div>
-          ${lead.contact_name ? `<div class="meta">Contato: ${esc(lead.contact_name)}</div>` : ""}
-          ${lead.phone ? `<div class="meta">Telefone: ${esc(lead.phone)}</div>` : ""}
-          ${lead.email ? `<div class="meta">E-mail: ${esc(lead.email)}</div>` : ""}
-          ${lead.notes ? `<details style="margin-top:6px"><summary class="meta">Ver detalhes</summary><p style="white-space:pre-wrap;font-size:12px">${esc(lead.notes)}</p></details>` : ""}
-        </div>
-        <button class="btn danger" type="button">Excluir</button>
-      </div>
-      <div class="status"></div>`;
-
-    const button = item.querySelector("button");
-    const status = item.querySelector(".status");
-
-    button.addEventListener("click", async () => {
-      if (!confirm(`Excluir o lead "${lead.company_name}"?`)) return;
-      button.disabled = true;
-      try {
-        const {error} = await db.from("leads")
-          .delete()
-          .eq("id", lead.id)
-          .eq("user_id", state.user.id);
-        if (error) throw error;
+  leads.forEach(lead=>{
+    const item=document.createElement("div");item.className="lead";
+    const date=lead.created_at?new Date(lead.created_at).toLocaleDateString("pt-BR"):"";
+    const website=safeUrl(lead.website);
+    item.innerHTML=`<div style="min-width:0;flex:1"><div class="lead-name">${esc(lead.company_name||"Empresa sem nome")}</div><div class="lead-info">${esc([lead.business_type,lead.city,lead.country,date].filter(Boolean).join(" · "))}</div>${lead.phone?`<div class="lead-info">Telefone: ${esc(lead.phone)}</div>`:""}${lead.email?`<div class="lead-info">E-mail: <a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a></div>`:""}${website?`<div class="lead-info"><a href="${esc(website)}" target="_blank" rel="noopener noreferrer">Abrir site ↗</a></div>`:""}</div><div class="lead-actions"><button class="btn danger" type="button">Excluir</button></div><div class="status"></div>`;
+    const btn=item.querySelector("button"),status=item.querySelector(".status");
+    btn.addEventListener("click",async()=>{
+      if(!confirm(`Excluir o lead "${lead.company_name}"?`))return;
+      btn.disabled=true;
+      try{
+        const {error}=await db.from("leads").delete().eq("id",lead.id).eq("user_id",state.user.id);
+        if(error)throw error;
         item.remove();
-        if (!root.children.length) {
-          root.innerHTML = "<p>Você ainda não salvou nenhum lead.</p>";
-        }
-        setStatus("leadsStatus", "Lead excluído.", "success");
-      } catch (error) {
-        status.textContent = friendlyError(error);
-        status.className = "status error";
-        button.disabled = false;
-      }
+        if(!root.children.length)root.innerHTML='<div class="empty"><strong>Nenhum lead salvo ainda</strong><p>Pesquise empresas para adicionar oportunidades.</p></div>';
+        setStatus("leadsStatus","Lead excluído.","success");
+      }catch(e){status.textContent=friendlyError(e);status.className="status error";btn.disabled=false}
     });
-
     root.appendChild(item);
   });
 }
-
-$("refreshLeads").addEventListener("click", loadLeads);
+$("refreshLeads").addEventListener("click",loadLeads);
 
 /* INICIALIZAÇÃO */
-db.auth.onAuthStateChange((event, session) => {
-  state.user = session?.user || null;
-  if (state.user) {
+db.auth.onAuthStateChange((event,session)=>{
+  state.user=session?.user||null;
+  if(state.user){
     showApp();
-    if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-      setTimeout(() => loadLeads(), 0);
-    }
-  } else {
-    showAuth();
-  }
+    if(event==="SIGNED_IN"||event==="INITIAL_SESSION")setTimeout(()=>loadLeads(),0);
+  }else showAuth();
 });
-
-async function init() {
+async function init(){
   updateQuota();
   loadStates();
-
-  const {data, error} = await db.auth.getSession();
-  if (error) {
-    setStatus("authStatus", friendlyError(error), "error");
-    return;
-  }
-  state.user = data.session?.user || null;
-  if (state.user) {
-    showApp();
-    await loadLeads();
-  } else {
-    showAuth();
-  }
+  try{
+    const {data,error}=await db.auth.getSession();
+    if(error)throw error;
+    state.user=data.session?.user||null;
+    if(state.user){showApp();await loadLeads()}else showAuth();
+  }catch(e){setStatus("authStatus",friendlyError(e),"error")}
 }
-
 init();
 })();
 </script>
