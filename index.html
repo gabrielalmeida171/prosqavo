@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07110d">
-  <meta name="description" content="Prosqavo: encontre empresas reais e organize seus leads.">
+  <meta name="description" content="Prosqavo: prospecção automática de empresas.">
   <title>Prosqavo — Prospecção B2B</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -17,212 +17,79 @@
       --text: #f2f7f3;
       --muted: #9aada1;
       --green: #42df91;
-      --red: #ff7777;
     }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
-
     button, input, select { font: inherit; }
     button { cursor: pointer; }
     button:disabled { opacity: .55; cursor: wait; }
-
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 18px 0;
-    }
-
-    .wrap {
-      width: min(100% - 30px, 1100px);
-      margin: auto;
-    }
-
-    .brand {
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
+    header { border-bottom: 1px solid var(--border); padding: 18px 0; }
+    .wrap { width: min(100% - 30px, 1100px); margin: auto; }
+    .brand { font-size: 27px; font-weight: 800; letter-spacing: -1px; }
     .brand span, .green { color: var(--green); }
-
-    .hero { padding: 35px 0 20px; }
-
+    .hero { padding: 35px 0 22px; }
     .eyebrow {
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      color: var(--green); font-size: 12px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
     }
-
-    h1 {
-      font-size: clamp(32px, 7vw, 52px);
-      line-height: 1.08;
-      letter-spacing: -2px;
-      margin: 12px 0;
-    }
-
+    h1 { font-size: clamp(32px, 7vw, 52px); line-height: 1.1; letter-spacing: -2px; }
     h2 { font-size: 21px; margin-top: 0; }
     p { line-height: 1.6; }
     .muted { color: var(--muted); }
-
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      padding: 21px;
-      margin-bottom: 18px;
-      min-width: 0;
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 17px; padding: 21px; margin-bottom: 18px;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 14px;
-      min-width: 0;
-    }
-
-    label {
-      color: #cbd9d0;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; min-width: 0; }
+    label { color: #cbd9d0; font-size: 13px; font-weight: 700; }
     input, select {
-      width: 100%;
-      min-width: 0;
-      padding: 13px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: #08120d;
-      color: var(--text);
-      outline: none;
+      width: 100%; min-width: 0; padding: 13px; border-radius: 10px;
+      border: 1px solid var(--border); background: #08120d; color: var(--text);
     }
-
-    input:focus, select:focus { border-color: var(--green); }
-
     button {
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-weight: 700;
-      background: var(--green);
-      color: #06140c;
+      border: 0; border-radius: 10px; padding: 12px 16px;
+      font-weight: 700; background: var(--green); color: #06140c;
     }
-
     button.secondary {
-      background: #1b2b22;
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: #1b2b22; color: var(--text); border: 1px solid var(--border);
     }
-
-    button.danger {
-      background: #351c1c;
-      color: #ffc0c0;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
+    button.danger { background: #351c1c; color: #ffc0c0; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
     .full { width: 100%; }
-
     .notice {
-      border-radius: 10px;
-      padding: 12px;
-      margin: 12px 0;
-      background: #14251b;
-      color: #c7f8d9;
-      overflow-wrap: anywhere;
+      border-radius: 10px; padding: 12px; margin: 12px 0;
+      background: #14251b; color: #c7f8d9; overflow-wrap: anywhere;
     }
-
-    .notice.error {
-      background: #351c1c;
-      color: #ffc0c0;
-    }
-
+    .notice.error { background: #351c1c; color: #ffc0c0; }
     .hidden { display: none !important; }
-
     .topline {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; flex-wrap: wrap;
     }
-
     .result-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px;
-      margin-top: 16px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px; margin-top: 16px;
     }
-
     .business {
-      min-width: 0;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      padding: 16px;
-      background: #0b1510;
+      min-width: 0; border: 1px solid var(--border); border-radius: 13px;
+      padding: 16px; background: #0b1510;
     }
-
-    .business h3 {
-      font-size: 17px;
-      line-height: 1.4;
-      margin: 0 0 10px;
-      overflow-wrap: anywhere;
-    }
-
-    .business p {
-      font-size: 13px;
-      margin: 7px 0;
-      overflow-wrap: anywhere;
-      color: #c4d2c8;
-    }
-
+    .business h3 { font-size: 17px; line-height: 1.4; margin: 0 0 10px; overflow-wrap: anywhere; }
+    .business p { font-size: 13px; margin: 7px 0; color: #c4d2c8; overflow-wrap: anywhere; }
     a { color: var(--green); overflow-wrap: anywhere; }
-
-    .business .actions { margin-top: 13px; }
     .business button { font-size: 12px; padding: 10px 12px; }
-
     .counter {
-      display: inline-block;
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 7px 11px;
-      font-size: 12px;
-      color: var(--muted);
+      display: inline-block; border: 1px solid var(--border); border-radius: 99px;
+      padding: 7px 11px; font-size: 12px; color: var(--muted);
     }
-
-    .empty {
-      padding: 25px 10px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    footer {
-      text-align: center;
-      color: var(--muted);
-      padding: 28px 0;
-      font-size: 12px;
-    }
-
+    .empty { padding: 25px 10px; text-align: center; color: var(--muted); }
+    footer { text-align: center; color: var(--muted); padding: 28px 0; font-size: 12px; }
     @media (max-width: 650px) {
       .grid, .result-list { grid-template-columns: 1fr; }
       .panel { padding: 16px; }
@@ -231,772 +98,702 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="wrap topline">
-      <div class="brand">prosqa<span>vo</span></div>
-      <div class="counter">Prospecção inteligente de empresas</div>
-    </div>
-  </header>
+<header>
+  <div class="wrap topline">
+    <div class="brand">prosqa<span>vo</span></div>
+    <span class="counter">Prospecção inteligente</span>
+  </div>
+</header>
 
-  <main class="wrap">
-    <section class="hero">
-      <div class="eyebrow">Sua próxima venda começa aqui</div>
-      <h1>Encontre empresas.<br><span class="green">Conquiste clientes.</span></h1>
-      <p class="muted">
-        Pesquise negócios por categoria e localização, descubra contatos disponíveis
-        e organize seus potenciais clientes em um só lugar.
-      </p>
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Sua próxima venda começa aqui</div>
+    <h1>Encontre empresas.<br><span class="green">Conquiste clientes.</span></h1>
+    <p class="muted">Descubra empresas por categoria e localização, veja os contatos disponíveis no mapa e organize seus potenciais clientes.</p>
+  </section>
+
+  <section class="panel" id="authPanel">
+    <h2>Acesse sua conta</h2>
+    <p class="muted">Entre ou crie sua conta gratuita.</p>
+    <form id="authForm">
+      <div class="field">
+        <label for="authEmail">E-mail</label>
+        <input id="authEmail" type="email" autocomplete="email" required placeholder="voce@email.com">
+      </div>
+      <div class="field">
+        <label for="authPassword">Senha</label>
+        <input id="authPassword" type="password" minlength="6" autocomplete="current-password" required placeholder="Mínimo de 6 caracteres">
+      </div>
+      <div class="actions">
+        <button id="loginBtn" type="submit">Entrar</button>
+        <button id="signupBtn" type="button" class="secondary">Criar conta</button>
+        <button id="resetBtn" type="button" class="secondary">Recuperar senha</button>
+      </div>
+    </form>
+    <div id="authMessage" class="notice hidden" role="status"></div>
+  </section>
+
+  <section id="appPanel" class="hidden">
+    <section class="panel">
+      <div class="topline">
+        <div>
+          <h2>Seu Prosqavo</h2>
+          <div class="muted" id="accountEmail"></div>
+        </div>
+        <button id="logoutBtn" class="secondary">Sair da conta</button>
+      </div>
+      <div class="notice">Plano Free: até 20 pesquisas por mês neste navegador. Cada pesquisa exibe até 20 empresas.</div>
+      <div id="usageText" class="muted"></div>
     </section>
 
-    <section class="panel" id="authPanel">
-      <h2>Acesse sua conta</h2>
-      <p class="muted">Entre ou crie sua conta gratuita para usar o Prosqavo.</p>
-
-      <form id="authForm">
-        <div class="field">
-          <label for="authEmail">E-mail</label>
-          <input id="authEmail" type="email" autocomplete="email" required
-                 placeholder="voce@email.com">
+    <section class="panel">
+      <h2>Encontrar empresas automaticamente</h2>
+      <p class="muted">Escolha uma categoria e uma cidade. O Prosqavo localiza a região e consulta estabelecimentos reais cadastrados no OpenStreetMap.</p>
+      <form id="searchForm">
+        <div class="grid">
+          <div class="field">
+            <label for="category">Tipo de empresa</label>
+            <select id="category">
+              <option value="barbearias">Barbearias</option>
+              <option value="restaurantes">Restaurantes</option>
+              <option value="padarias">Padarias</option>
+              <option value="saloes">Salões de beleza</option>
+              <option value="oficinas">Oficinas mecânicas</option>
+              <option value="cafes">Cafés</option>
+              <option value="hoteis">Hotéis e pousadas</option>
+              <option value="farmacias">Farmácias</option>
+              <option value="academias">Academias</option>
+              <option value="dentistas">Clínicas odontológicas</option>
+              <option value="mercados">Mercados e supermercados</option>
+              <option value="petshops">Pet shops</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="city">Cidade e estado</label>
+            <input id="city" value="Rio das Ostras, RJ" required placeholder="Ex.: Rio das Ostras, RJ">
+          </div>
         </div>
-
-        <div class="field">
-          <label for="authPassword">Senha</label>
-          <input id="authPassword" type="password" minlength="6"
-                 autocomplete="current-password" required placeholder="Mínimo de 6 caracteres">
-        </div>
-
-        <div class="actions">
-          <button type="submit" id="loginBtn">Entrar</button>
-          <button type="button" class="secondary" id="signupBtn">Criar conta</button>
-          <button type="button" class="secondary" id="resetBtn">Recuperar senha</button>
-        </div>
+        <button id="searchBtn" type="submit" class="full">Pesquisar empresas</button>
       </form>
 
-      <div id="authMessage" class="notice hidden" role="status"></div>
-    </section>
-
-    <section id="appPanel" class="hidden">
-      <div class="panel">
-        <div class="topline">
-          <div>
-            <h2>Olá, vamos prospectar?</h2>
-            <div class="muted" id="accountEmail"></div>
-          </div>
-          <button class="secondary" id="logoutBtn">Sair da conta</button>
-        </div>
-        <div class="notice">
-          Plano Free: até 20 pesquisas por mês neste navegador.
-          Cada pesquisa pode retornar até 20 empresas.
-        </div>
-        <div id="usageText" class="muted"></div>
+      <div id="searchMessage" class="notice hidden" role="status"></div>
+      <div class="topline" style="margin-top:20px">
+        <h2 style="margin:0">Resultados</h2>
+        <span id="resultCount" class="counter">0 empresas</span>
       </div>
-
-      <section class="panel">
-        <h2>Encontrar empresas</h2>
-        <p class="muted">
-          Escolha o tipo de negócio e informe a cidade. O Prosqavo buscará
-          estabelecimentos cadastrados no OpenStreetMap.
-        </p>
-
-        <form id="searchForm">
-          <div class="grid">
-            <div class="field">
-              <label for="category">Tipo de empresa</label>
-              <select id="category" required>
-                <option value="barbearias">Barbearias</option>
-                <option value="restaurantes">Restaurantes</option>
-                <option value="padarias">Padarias</option>
-                <option value="saloes">Salões de beleza</option>
-                <option value="oficinas">Oficinas mecânicas</option>
-                <option value="cafes">Cafés</option>
-                <option value="hoteis">Hotéis</option>
-                <option value="farmacias">Farmácias</option>
-                <option value="academias">Academias</option>
-                <option value="dentistas">Clínicas odontológicas</option>
-                <option value="mercados">Mercados e supermercados</option>
-                <option value="petshops">Pet shops</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="city">Cidade e estado</label>
-              <input id="city" required value="Rio das Ostras, RJ"
-                     placeholder="Ex.: Rio das Ostras, RJ">
-            </div>
-          </div>
-
-          <button type="submit" id="searchBtn" class="full">Pesquisar empresas</button>
-        </form>
-
-        <div id="searchMessage" class="notice hidden" role="status"></div>
-
-        <div class="topline" style="margin-top:20px">
-          <h2 style="margin:0">Resultados</h2>
-          <span class="counter" id="resultCount">0 empresas</span>
-        </div>
-
-        <div id="results" class="result-list">
-          <div class="empty">Faça uma pesquisa para encontrar empresas.</div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="topline">
-          <div>
-            <h2>Meus leads</h2>
-            <p class="muted">Empresas que você salvou para acompanhar.</p>
-          </div>
-          <button class="secondary" id="refreshLeadsBtn">Atualizar</button>
-        </div>
-        <div id="leadsMessage" class="notice hidden" role="status"></div>
-        <div id="leadsList" class="result-list">
-          <div class="empty">Carregando seus leads...</div>
-        </div>
-      </section>
+      <div id="results" class="result-list">
+        <div class="empty">Faça uma pesquisa para encontrar empresas.</div>
+      </div>
     </section>
 
-    <footer>
-      Prosqavo © 2026 · Dados empresariais do OpenStreetMap ·
-      A disponibilidade de contatos depende dos dados cadastrados.
-    </footer>
-  </main>
+    <section class="panel">
+      <div class="topline">
+        <div>
+          <h2>Meus leads</h2>
+          <p class="muted">Empresas salvas na sua conta.</p>
+        </div>
+        <button id="refreshLeadsBtn" class="secondary">Atualizar</button>
+      </div>
+      <div id="leadsMessage" class="notice hidden" role="status"></div>
+      <div id="leadsList" class="result-list">
+        <div class="empty">Seus leads aparecerão aqui.</div>
+      </div>
+    </section>
+  </section>
+</main>
 
-  <script>
-    (() => {
-      "use strict";
+<footer>Prosqavo © 2026 · Dados de empresas do OpenStreetMap</footer>
 
-      const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
-      const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
+<script>
+(() => {
+  "use strict";
 
-      const supabase = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+  const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
 
-      const $ = (id) => document.getElementById(id);
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
 
-      let currentUser = null;
-      let searchResults = [];
-      let searchBusy = false;
+  let user = null;
+  let busy = false;
 
-      const categories = {
-        barbearias: [
-          ["shop", "barber"],
-          ["amenity", "barber"],
-          ["shop", "hairdresser"]
-        ],
-        restaurantes: [["amenity", "restaurant"]],
-        padarias: [["shop", "bakery"]],
-        saloes: [
-          ["shop", "beauty"],
-          ["shop", "hairdresser"]
-        ],
-        oficinas: [["shop", "car_repair"]],
-        cafes: [["amenity", "cafe"]],
-        hoteis: [
-          ["tourism", "hotel"],
-          ["tourism", "motel"],
-          ["tourism", "guest_house"]
-        ],
-        farmacias: [["amenity", "pharmacy"]],
-        academias: [
-          ["leisure", "fitness_centre"],
-          ["leisure", "sports_centre"]
-        ],
-        dentistas: [["healthcare", "dentist"]],
-        mercados: [
-          ["shop", "supermarket"],
-          ["shop", "convenience"]
-        ],
-        petshops: [["shop", "pet"]]
-      };
+  const categories = {
+    barbearias: [["shop","barber"],["amenity","barber"],["shop","hairdresser"]],
+    restaurantes: [["amenity","restaurant"]],
+    padarias: [["shop","bakery"]],
+    saloes: [["shop","beauty"],["shop","hairdresser"]],
+    oficinas: [["shop","car_repair"]],
+    cafes: [["amenity","cafe"]],
+    hoteis: [["tourism","hotel"],["tourism","guest_house"],["tourism","motel"]],
+    farmacias: [["amenity","pharmacy"]],
+    academias: [["leisure","fitness_centre"],["leisure","sports_centre"]],
+    dentistas: [["healthcare","dentist"],["amenity","dentist"]],
+    mercados: [["shop","supermarket"],["shop","convenience"]],
+    petshops: [["shop","pet"]]
+  };
 
-      function message(id, text, error = false) {
-        const el = $(id);
-        el.textContent = text;
-        el.classList.remove("hidden", "error");
-        if (error) el.classList.add("error");
-      }
+  function show(id, text, error = false) {
+    const el = $(id);
+    el.textContent = text;
+    el.classList.remove("hidden", "error");
+    if (error) el.classList.add("error");
+  }
 
-      function clearMessage(id) {
-        $(id).textContent = "";
-        $(id).classList.add("hidden");
-        $(id).classList.remove("error");
-      }
+  function clear(id) {
+    $(id).textContent = "";
+    $(id).classList.add("hidden");
+    $(id).classList.remove("error");
+  }
 
-      function setBusy(buttonId, busy, busyText = "Aguarde...") {
-        const button = $(buttonId);
-        if (busy) {
-          button.dataset.originalText = button.textContent;
-          button.textContent = busyText;
-          button.disabled = true;
-        } else {
-          button.textContent = button.dataset.originalText || button.textContent;
-          button.disabled = false;
-        }
-      }
+  function buttonBusy(id, state, text) {
+    const b = $(id);
+    if (state) {
+      b.dataset.original = b.textContent;
+      b.textContent = text || "Aguarde...";
+      b.disabled = true;
+    } else {
+      b.textContent = b.dataset.original || b.textContent;
+      b.disabled = false;
+    }
+  }
 
-      function addText(parent, tag, text, className) {
-        const el = document.createElement(tag);
-        el.textContent = text || "";
-        if (className) el.className = className;
-        parent.appendChild(el);
-        return el;
-      }
+  function text(parent, tag, value, cls) {
+    const el = document.createElement(tag);
+    el.textContent = value || "";
+    if (cls) el.className = cls;
+    parent.appendChild(el);
+    return el;
+  }
 
-      function addLink(parent, text, url) {
-        if (!url) return;
-        const link = document.createElement("a");
-        link.textContent = text;
-        link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        parent.appendChild(link);
-      }
+  function link(parent, label, href) {
+    if (!href) return;
+    const a = document.createElement("a");
+    a.textContent = label;
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    parent.appendChild(a);
+  }
 
-      function safeUrl(url) {
-        if (!url) return "";
-        let candidate = String(url).trim();
-        if (!/^https?:\/\//i.test(candidate)) {
-          candidate = "https://" + candidate;
-        }
-        try {
-          const parsed = new URL(candidate);
-          return ["http:", "https:"].includes(parsed.protocol) ? parsed.href : "";
-        } catch (_) {
-          return "";
-        }
-      }
+  function safeWebsite(value) {
+    if (!value) return "";
+    let v = String(value).trim();
+    if (!/^https?:\/\//i.test(v)) v = "https://" + v;
+    try {
+      const u = new URL(v);
+      return u.protocol === "https:" || u.protocol === "http:" ? u.href : "";
+    } catch (_) { return ""; }
+  }
 
-      function getUsageKey() {
-        const now = new Date();
-        const month = now.getFullYear() + "-" +
-          String(now.getMonth() + 1).padStart(2, "0");
-        return "prosqa_vo_searches_" + currentUser.id + "_" + month;
-      }
+  function usageKey() {
+    const d = new Date();
+    return "prosqa_vo_" + user.id + "_" + d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0");
+  }
 
-      function getUsage() {
-        try {
-          return Number(localStorage.getItem(getUsageKey()) || 0);
-        } catch (_) {
-          return 0;
-        }
-      }
+  function usage() {
+    try { return Number(localStorage.getItem(usageKey()) || 0); }
+    catch (_) { return 0; }
+  }
 
-      function updateUsage() {
-        $("usageText").textContent =
-          "Pesquisas utilizadas neste navegador neste mês: " +
-          getUsage() + " de 20.";
-      }
+  function updateUsage() {
+    if (user) $("usageText").textContent =
+      "Pesquisas neste navegador neste mês: " + usage() + " de 20.";
+  }
 
-      function incrementUsage() {
-        try {
-          localStorage.setItem(getUsageKey(), String(getUsage() + 1));
-        } catch (_) {}
-        updateUsage();
-      }
+  function setUser(nextUser) {
+    user = nextUser || null;
+    $("authPanel").classList.toggle("hidden", !!user);
+    $("appPanel").classList.toggle("hidden", !user);
 
-      function setAuthenticated(user) {
-        currentUser = user || null;
-        $("authPanel").classList.toggle("hidden", !!currentUser);
-        $("appPanel").classList.toggle("hidden", !currentUser);
+    if (user) {
+      $("accountEmail").textContent = user.email || "";
+      updateUsage();
+      loadLeads();
+    } else {
+      $("accountEmail").textContent = "";
+      $("leadsList").replaceChildren();
+      $("results").replaceChildren();
+      text($("leadsList"), "div", "Entre para ver seus leads.", "empty");
+      text($("results"), "div", "Faça uma pesquisa para encontrar empresas.", "empty");
+      $("resultCount").textContent = "0 empresas";
+    }
+  }
 
-        if (currentUser) {
-          $("accountEmail").textContent = currentUser.email || "";
-          updateUsage();
-          loadLeads();
-        } else {
-          $("accountEmail").textContent = "";
-          $("leadsList").replaceChildren();
-          $("results").replaceChildren();
-          searchResults = [];
-          $("resultCount").textContent = "0 empresas";
-        }
-      }
+  $("authForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    clear("authMessage");
+    buttonBusy("loginBtn", true, "Entrando...");
 
-      $("authForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        clearMessage("authMessage");
-
-        const email = $("authEmail").value.trim();
-        const password = $("authPassword").value;
-
-        setBusy("loginBtn", true, "Entrando...");
-
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-          });
-
-          if (error) throw error;
-
-          setAuthenticated(data.user);
-          message("authMessage", "Login realizado com sucesso.");
-        } catch (error) {
-          message("authMessage", error.message || "Não foi possível entrar.", true);
-        } finally {
-          setBusy("loginBtn", false);
-        }
+    try {
+      const { data, error } = await db.auth.signInWithPassword({
+        email: $("authEmail").value.trim(),
+        password: $("authPassword").value
       });
+      if (error) throw error;
+      setUser(data.user);
+      show("authMessage", "Login realizado.");
+    } catch (err) {
+      show("authMessage", err.message || "Falha no login.", true);
+    } finally {
+      buttonBusy("loginBtn", false);
+    }
+  });
 
-      $("signupBtn").addEventListener("click", async () => {
-        clearMessage("authMessage");
+  $("signupBtn").addEventListener("click", async () => {
+    clear("authMessage");
+    const email = $("authEmail").value.trim();
+    const password = $("authPassword").value;
+    if (!email || password.length < 6) {
+      show("authMessage", "Informe um e-mail válido e uma senha de pelo menos 6 caracteres.", true);
+      return;
+    }
 
-        const email = $("authEmail").value.trim();
-        const password = $("authPassword").value;
+    buttonBusy("signupBtn", true, "Criando...");
+    try {
+      const { data, error } = await db.auth.signUp({ email, password });
+      if (error) throw error;
+      if (data.session) setUser(data.user);
+      show("authMessage", data.session
+        ? "Conta criada com sucesso."
+        : "Cadastro enviado. Confira seu e-mail para confirmar a conta, se solicitado.");
+    } catch (err) {
+      show("authMessage", err.message || "Falha no cadastro.", true);
+    } finally {
+      buttonBusy("signupBtn", false);
+    }
+  });
 
-        if (!email || password.length < 6) {
-          message("authMessage",
-            "Informe um e-mail válido e uma senha com pelo menos 6 caracteres.",
-            true);
-          return;
-        }
-
-        setBusy("signupBtn", true, "Criando...");
-
-        try {
-          const { data, error } = await supabase.auth.signUp({
-            email,
-            password
-          });
-
-          if (error) throw error;
-
-          if (data.session) {
-            setAuthenticated(data.user);
-            message("authMessage", "Conta criada e login realizado.");
-          } else {
-            message("authMessage",
-              "Cadastro enviado. Confira seu e-mail para confirmar a conta, se a confirmação estiver ativada.");
-          }
-        } catch (error) {
-          message("authMessage", error.message || "Não foi possível criar a conta.", true);
-        } finally {
-          setBusy("signupBtn", false);
-        }
+  $("resetBtn").addEventListener("click", async () => {
+    clear("authMessage");
+    const email = $("authEmail").value.trim();
+    if (!email) {
+      show("authMessage", "Digite seu e-mail primeiro.", true);
+      return;
+    }
+    buttonBusy("resetBtn", true, "Enviando...");
+    try {
+      const { error } = await db.auth.resetPasswordForEmail(email, {
+        redirectTo: location.origin
       });
+      if (error) throw error;
+      show("authMessage", "Se o e-mail estiver cadastrado, você receberá instruções de recuperação.");
+    } catch (err) {
+      show("authMessage", err.message || "Falha ao enviar recuperação.", true);
+    } finally {
+      buttonBusy("resetBtn", false);
+    }
+  });
 
-      $("resetBtn").addEventListener("click", async () => {
-        clearMessage("authMessage");
-        const email = $("authEmail").value.trim();
+  $("logoutBtn").addEventListener("click", async () => {
+    const { error } = await db.auth.signOut();
+    if (error) show("searchMessage", error.message, true);
+    else setUser(null);
+  });
 
-        if (!email) {
-          message("authMessage", "Digite seu e-mail para recuperar a senha.", true);
-          return;
-        }
+  async function getJson(url, options = {}) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 25000);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      if (!response.ok) throw new Error("Erro HTTP " + response.status);
+      return await response.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  }
 
-        setBusy("resetBtn", true, "Enviando...");
+  async function locateCity(input) {
+    const parts = input.split(",").map(s => s.trim()).filter(Boolean);
+    const city = parts[0];
+    const state = parts[1] || "RJ";
 
-        try {
-          const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin
-          });
+    const url = "https://nominatim.openstreetmap.org/search?format=jsonv2" +
+      "&limit=5&addressdetails=1&country=Brasil" +
+      "&city=" + encodeURIComponent(city) +
+      "&state=" + encodeURIComponent(state);
 
-          if (error) throw error;
-          message("authMessage", "Se o e-mail estiver cadastrado, você receberá instruções para recuperar a senha.");
-        } catch (error) {
-          message("authMessage", error.message || "Falha ao solicitar recuperação.", true);
-        } finally {
-          setBusy("resetBtn", false);
-        }
+    let results;
+    try {
+      results = await getJson(url, {
+        headers: { "Accept": "application/json" }
       });
+    } catch (_) {
+      throw new Error("Não foi possível localizar a cidade no serviço de mapas. Tente novamente em alguns minutos.");
+    }
 
-      $("logoutBtn").addEventListener("click", async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-          message("searchMessage", error.message, true);
-          return;
-        }
-        setAuthenticated(null);
-      });
+    if (!Array.isArray(results) || results.length === 0) {
+      const fallback = "https://nominatim.openstreetmap.org/search?format=jsonv2" +
+        "&limit=5&country=Brasil&q=" + encodeURIComponent(input);
 
-      function escapeOverpass(value) {
-        return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+      try {
+        results = await getJson(fallback, {
+          headers: { "Accept": "application/json" }
+        });
+      } catch (_) {
+        throw new Error("Falha ao consultar o mapa. Verifique a conexão e tente novamente.");
       }
+    }
 
-      function makeQuery(city, category) {
-        const name = escapeOverpass(city);
-        const tags = categories[category] || categories.barbearias;
+    if (!Array.isArray(results) || !results.length) {
+      throw new Error("Cidade não encontrada. Digite cidade e estado, por exemplo: Rio das Ostras, RJ.");
+    }
 
-        const selectors = tags.map(([key, value]) =>
-          `nwr["${key}"="${value}"](area.searchArea);`
-        ).join("\n");
+    const result = results.find(r =>
+      r.class === "boundary" || r.type === "administrative"
+    ) || results[0];
 
-        return `
-[out:json][timeout:35];
-area["name"="${name}"]["boundary"="administrative"]["admin_level"~"^(6|7|8|9|10)$"]->.searchArea;
+    const box = result.boundingbox;
+    if (!box || box.length !== 4) {
+      throw new Error("O mapa não forneceu os limites desta cidade.");
+    }
+
+    return {
+      name: result.display_name,
+      south: Number(box[0]),
+      north: Number(box[1]),
+      west: Number(box[2]),
+      east: Number(box[3])
+    };
+  }
+
+  async function queryOverpass(query) {
+    const endpoints = [
+      "https://overpass.private.coffee/api/interpreter",
+      "https://overpass-api.de/api/interpreter",
+      "https://overpass.kumi.systems/api/interpreter"
+    ];
+    let lastError;
+
+    for (const endpoint of endpoints) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 35000);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: "data=" + encodeURIComponent(query),
+          signal: controller.signal
+        });
+
+        if (!response.ok) throw new Error("Servidor de mapas respondeu HTTP " + response.status);
+
+        const data = await response.json();
+        if (!Array.isArray(data.elements)) throw new Error("Resposta inválida do mapa.");
+        return data;
+      } catch (err) {
+        lastError = err;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    throw new Error(
+      lastError && lastError.name === "AbortError"
+        ? "Os servidores de mapas demoraram demais para responder."
+        : "Falha de conexão com os servidores públicos de mapas. " +
+          (lastError && lastError.message ? lastError.message : "")
+    );
+  }
+
+  function buildQuery(box, category) {
+    const tags = categories[category] || categories.barbearias;
+    const selectors = tags.map(([key, value]) =>
+      `nwr["${key}"="${value}"](${box.south},${box.west},${box.north},${box.east});`
+    ).join("\n");
+
+    return `[out:json][timeout:30];
 (
 ${selectors}
 );
-out center tags 100;
-`;
+out center tags 150;`;
+  }
+
+  function address(tags) {
+    const street = tags["addr:street"] || tags["addr:place"] || "";
+    const number = tags["addr:housenumber"] || "";
+    const district = tags["addr:suburb"] || "";
+    const city = tags["addr:city"] || "";
+    const zip = tags["addr:postcode"] || "";
+    let value = [street, number].filter(Boolean).join(", ");
+    if (district) value += (value ? " — " : "") + district;
+    if (city) value += (value ? ", " : "") + city;
+    if (zip) value += (value ? " · " : "") + zip;
+    return value || "Endereço não informado";
+  }
+
+  function normalize(el) {
+    const t = el.tags || {};
+    const type = el.type || "node";
+    const id = el.id;
+    return {
+      key: type + "/" + id,
+      name: t.name || t.brand || t.operator || "Empresa sem nome cadastrado",
+      address: address(t),
+      phone: t["contact:phone"] || t.phone || t["contact:mobile"] || "",
+      email: t["contact:email"] || t.email || "",
+      website: safeWebsite(t["contact:website"] || t.website || ""),
+      lat: el.lat ?? (el.center && el.center.lat),
+      lon: el.lon ?? (el.center && el.center.lon),
+      osm: "https://www.openstreetmap.org/" + type + "/" + id
+    };
+  }
+
+  function renderResults(list) {
+    const root = $("results");
+    root.replaceChildren();
+    $("resultCount").textContent = list.length + (list.length === 1 ? " empresa" : " empresas");
+
+    if (!list.length) {
+      text(root, "div", "Nenhuma empresa encontrada nesta região. Tente outra categoria ou cidade.", "empty");
+      return;
+    }
+
+    list.forEach(b => {
+      const card = document.createElement("article");
+      card.className = "business";
+      text(card, "h3", b.name);
+      text(card, "p", "📍 " + b.address);
+
+      const phone = text(card, "p", "Telefone: ");
+      if (b.phone) link(phone, b.phone, "tel:" + b.phone.replace(/[^\d+]/g, ""));
+      else phone.appendChild(document.createTextNode("não informado"));
+
+      const email = text(card, "p", "E-mail: ");
+      if (b.email) link(email, b.email, "mailto:" + b.email);
+      else email.appendChild(document.createTextNode("não informado"));
+
+      if (b.website) {
+        const site = text(card, "p", "Site: ");
+        link(site, b.website, b.website);
       }
 
-      async function fetchOverpass(query) {
-        const endpoints = [
-          "https://overpass-api.de/api/interpreter",
-          "https://overpass.kumi.systems/api/interpreter"
-        ];
+      if (b.lat != null && b.lon != null) {
+        const map = text(card, "p", "Mapa: ");
+        link(map, "Ver localização", "https://www.openstreetmap.org/?mlat=" +
+          encodeURIComponent(b.lat) + "&mlon=" + encodeURIComponent(b.lon) +
+          "#map=18/" + encodeURIComponent(b.lat) + "/" + encodeURIComponent(b.lon));
+      }
 
-        let lastError;
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const save = document.createElement("button");
+      save.textContent = "Salvar lead";
+      save.addEventListener("click", () => saveLead(b, save));
+      actions.appendChild(save);
 
-        for (const endpoint of endpoints) {
+      const source = document.createElement("a");
+      source.href = b.osm;
+      source.target = "_blank";
+      source.rel = "noopener noreferrer";
+      source.textContent = "Fonte dos dados";
+      actions.appendChild(source);
+
+      card.appendChild(actions);
+      root.appendChild(card);
+    });
+  }
+
+  $("searchForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    clear("searchMessage");
+
+    if (!user) {
+      show("searchMessage", "Entre na sua conta para pesquisar.", true);
+      return;
+    }
+    if (busy) return;
+
+    if (usage() >= 20) {
+      show("searchMessage", "Você atingiu o limite local de 20 pesquisas neste mês.", true);
+      return;
+    }
+
+    const city = $("city").value.trim();
+    if (!city) {
+      show("searchMessage", "Informe cidade e estado.", true);
+      return;
+    }
+
+    busy = true;
+    buttonBusy("searchBtn", true, "Localizando cidade...");
+    show("searchMessage", "Etapa 1 de 2: localizando a cidade no mapa.");
+
+    try {
+      const box = await locateCity(city);
+
+      show("searchMessage", "Etapa 2 de 2: procurando empresas na região de " + box.name + ". Isso pode levar alguns segundos.");
+      buttonBusy("searchBtn", true, "Buscando empresas...");
+
+      const data = await queryOverpass(buildQuery(box, $("category").value));
+      const seen = new Set();
+      const results = [];
+
+      for (const el of data.elements) {
+        const b = normalize(el);
+        if (!seen.has(b.key)) {
+          seen.add(b.key);
+          results.push(b);
+        }
+      }
+
+      results.sort((a, b) => {
+        const aa = a.name === "Empresa sem nome cadastrado" ? 1 : 0;
+        const bb = b.name === "Empresa sem nome cadastrado" ? 1 : 0;
+        return aa - bb || a.name.localeCompare(b.name, "pt-BR");
+      });
+
+      const limited = results.slice(0, 20);
+      renderResults(limited);
+
+      try {
+        localStorage.setItem(usageKey(), String(usage() + 1));
+      } catch (_) {}
+      updateUsage();
+
+      if (limited.length) {
+        show("searchMessage", "Pesquisa concluída: " + limited.length +
+          " empresas encontradas. A região usa os limites geográficos retornados pelo mapa; resultados podem incluir áreas próximas.");
+      } else {
+        show("searchMessage", "Não encontramos empresas desta categoria nessa região. Tente outra categoria ou cidade.");
+      }
+    } catch (err) {
+      show("searchMessage", err.message || "Não foi possível concluir a pesquisa.", true);
+    } finally {
+      busy = false;
+      buttonBusy("searchBtn", false);
+    }
+  });
+
+  async function saveLead(b, button) {
+    if (!user) return;
+    button.disabled = true;
+    button.textContent = "Salvando...";
+
+    const notes = [
+      "Endereço: " + b.address,
+      "Site: " + (b.website || "Não informado"),
+      "Fonte: OpenStreetMap",
+      "Objeto: " + b.key,
+      b.lat != null && b.lon != null ? "Coordenadas: " + b.lat + ", " + b.lon : ""
+    ].filter(Boolean).join("\n");
+
+    try {
+      const { error } = await db.from("leads").insert({
+        user_id: user.id,
+        company_name: b.name,
+        contact_name: null,
+        email: b.email || null,
+        phone: b.phone || null,
+        notes
+      });
+
+      if (error) throw error;
+      button.textContent = "Salvo ✓";
+      show("leadsMessage", "Lead salvo na sua conta.");
+      await loadLeads();
+    } catch (err) {
+      button.textContent = "Salvar lead";
+      button.disabled = false;
+      show("searchMessage", "Falha ao salvar o lead. Confira a tabela leads e as políticas RLS do Supabase. " +
+        (err.message || ""), true);
+    }
+  }
+
+  async function loadLeads() {
+    if (!user) return;
+    const root = $("leadsList");
+    root.replaceChildren();
+    text(root, "div", "Carregando seus leads...", "empty");
+
+    try {
+      const { data, error } = await db.from("leads")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      root.replaceChildren();
+
+      if (!data || !data.length) {
+        text(root, "div", "Você ainda não salvou leads.", "empty");
+        return;
+      }
+
+      data.forEach(lead => {
+        const card = document.createElement("article");
+        card.className = "business";
+        text(card, "h3", lead.company_name || "Empresa sem nome");
+
+        if (lead.phone) {
+          const p = text(card, "p", "Telefone: ");
+          link(p, lead.phone, "tel:" + String(lead.phone).replace(/[^\d+]/g, ""));
+        }
+        if (lead.email) {
+          const p = text(card, "p", "E-mail: ");
+          link(p, lead.email, "mailto:" + lead.email);
+        }
+        if (lead.contact_name) text(card, "p", "Contato: " + lead.contact_name);
+
+        if (lead.notes) {
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = "Ver endereço e detalhes";
+          details.appendChild(summary);
+          text(details, "p", lead.notes);
+          card.appendChild(details);
+        }
+
+        const remove = document.createElement("button");
+        remove.className = "danger";
+        remove.textContent = "Excluir lead";
+        remove.addEventListener("click", async () => {
+          if (!confirm("Deseja excluir este lead?")) return;
+          remove.disabled = true;
           try {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 45000);
-
-            try {
-              const response = await fetch(endpoint, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-                },
-                body: "data=" + encodeURIComponent(query),
-                signal: controller.signal
-              });
-
-              if (!response.ok) {
-                throw new Error("O serviço de mapas respondeu com erro " + response.status + ".");
-              }
-
-              return await response.json();
-            } finally {
-              clearTimeout(timer);
-            }
-          } catch (error) {
-            lastError = error;
+            const { error } = await db.from("leads").delete()
+              .eq("id", lead.id).eq("user_id", user.id);
+            if (error) throw error;
+            show("leadsMessage", "Lead excluído.");
+            await loadLeads();
+          } catch (err) {
+            show("leadsMessage", err.message || "Não foi possível excluir.", true);
+            remove.disabled = false;
           }
-        }
-
-        throw lastError || new Error("Não foi possível acessar o serviço de mapas.");
-      }
-
-      function addressFrom(tags) {
-        const street = tags["addr:street"] || tags["addr:place"] || "";
-        const number = tags["addr:housenumber"] || "";
-        const district = tags["addr:suburb"] || "";
-        const city = tags["addr:city"] || "";
-        const postcode = tags["addr:postcode"] || "";
-
-        let address = [street, number].filter(Boolean).join(", ");
-        if (district) address += (address ? " — " : "") + district;
-        if (city) address += (address ? ", " : "") + city;
-        if (postcode) address += (address ? " · " : "") + postcode;
-
-        return address || "Endereço não informado na fonte";
-      }
-
-      function normalizeBusiness(element) {
-        const tags = element.tags || {};
-        const lat = element.lat ?? element.center?.lat;
-        const lon = element.lon ?? element.center?.lon;
-        const type = element.type || "node";
-        const id = element.id;
-
-        return {
-          id: type + "-" + id,
-          osmType: type,
-          osmId: id,
-          name: tags.name || tags.brand || tags.operator || "Empresa sem nome cadastrado",
-          address: addressFrom(tags),
-          phone: tags["contact:phone"] || tags.phone || tags["contact:mobile"] || "",
-          email: tags["contact:email"] || tags.email || "",
-          website: safeUrl(tags["contact:website"] || tags.website || tags.url || ""),
-          lat,
-          lon,
-          osmUrl: "https://www.openstreetmap.org/" + type + "/" + id
-        };
-      }
-
-      function renderBusinesses(list) {
-        const container = $("results");
-        container.replaceChildren();
-        $("resultCount").textContent = list.length + (list.length === 1 ? " empresa" : " empresas");
-
-        if (!list.length) {
-          addText(container, "div",
-            "Nenhuma empresa encontrada nesta busca. Tente outra categoria ou confira o nome da cidade.",
-            "empty");
-          return;
-        }
-
-        list.forEach((business, index) => {
-          const card = document.createElement("article");
-          card.className = "business";
-
-          addText(card, "h3", business.name);
-          addText(card, "p", "📍 " + business.address);
-
-          if (business.phone) {
-            const p = addText(card, "p", "Telefone: ");
-            addLink(p, business.phone, "tel:" + business.phone.replace(/[^\d+]/g, ""));
-          } else {
-            addText(card, "p", "Telefone: não informado na fonte");
-          }
-
-          if (business.email) {
-            const p = addText(card, "p", "E-mail: ");
-            addLink(p, business.email, "mailto:" + business.email);
-          } else {
-            addText(card, "p", "E-mail: não informado na fonte");
-          }
-
-          if (business.website) {
-            const p = addText(card, "p", "Site: ");
-            addLink(p, business.website, business.website);
-          }
-
-          const actions = document.createElement("div");
-          actions.className = "actions";
-
-          const save = document.createElement("button");
-          save.type = "button";
-          save.textContent = "Salvar lead";
-          save.addEventListener("click", () => saveLead(business, save));
-          actions.appendChild(save);
-
-          const source = document.createElement("a");
-          source.href = business.osmUrl;
-          source.target = "_blank";
-          source.rel = "noopener noreferrer";
-          source.textContent = "Ver fonte";
-          actions.appendChild(source);
-
-          card.appendChild(actions);
-          container.appendChild(card);
         });
-      }
 
-      $("searchForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
-        clearMessage("searchMessage");
-
-        if (!currentUser) {
-          message("searchMessage", "Entre na sua conta para pesquisar.", true);
-          return;
-        }
-
-        if (searchBusy) return;
-
-        if (getUsage() >= 20) {
-          message("searchMessage",
-            "Você atingiu as 20 pesquisas deste mês neste navegador. O contador local não é um controle de segurança do servidor.",
-            true);
-          return;
-        }
-
-        const cityInput = $("city").value.trim();
-        const city = cityInput.split(",")[0].trim();
-        const category = $("category").value;
-
-        if (!city) {
-          message("searchMessage", "Informe a cidade.", true);
-          return;
-        }
-
-        searchBusy = true;
-        setBusy("searchBtn", true, "Buscando empresas...");
-        message("searchMessage", "Consultando dados públicos de empresas. Isso pode levar alguns segundos.");
-
-        try {
-          const query = makeQuery(city, category);
-          const data = await fetchOverpass(query);
-          const elements = Array.isArray(data.elements) ? data.elements : [];
-
-          const unique = new Map();
-
-          elements.forEach((element) => {
-            const business = normalizeBusiness(element);
-            if (!unique.has(business.id)) unique.set(business.id, business);
-          });
-
-          searchResults = Array.from(unique.values()).slice(0, 20);
-          incrementUsage();
-          renderBusinesses(searchResults);
-
-          if (searchResults.length) {
-            message("searchMessage",
-              "Busca concluída: " + searchResults.length +
-              " resultados. Os contatos exibidos dependem das informações cadastradas no OpenStreetMap.");
-          } else {
-            message("searchMessage",
-              "A busca foi concluída, mas não encontramos resultados para essa categoria e cidade. Confira a grafia ou tente novamente.");
-          }
-        } catch (error) {
-          message("searchMessage",
-            "Não foi possível concluir a busca. O serviço público pode estar temporariamente indisponível ou não reconhecer essa cidade. Tente novamente. Detalhe: " +
-            (error.message || "erro de conexão"),
-            true);
-        } finally {
-          searchBusy = false;
-          setBusy("searchBtn", false);
-        }
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        actions.appendChild(remove);
+        card.appendChild(actions);
+        root.appendChild(card);
       });
+    } catch (err) {
+      root.replaceChildren();
+      text(root, "div", "Erro ao carregar leads: " + (err.message || "erro desconhecido"), "empty");
+    }
+  }
 
-      async function saveLead(business, button) {
-        if (!currentUser) {
-          message("searchMessage", "Entre na sua conta para salvar leads.", true);
-          return;
-        }
+  $("refreshLeadsBtn").addEventListener("click", loadLeads);
 
-        button.disabled = true;
-        button.textContent = "Salvando...";
+  db.auth.onAuthStateChange((_event, session) => {
+    setUser(session ? session.user : null);
+  });
 
-        const notes = [
-          "Endereço: " + business.address,
-          "Site: " + (business.website || "Não informado"),
-          "Fonte: OpenStreetMap",
-          "Objeto OSM: " + business.osmType + "/" + business.osmId,
-          business.lat != null && business.lon != null
-            ? "Coordenadas: " + business.lat + ", " + business.lon
-            : ""
-        ].filter(Boolean).join("\n");
+  async function init() {
+    try {
+      const { data, error } = await db.auth.getSession();
+      if (error) throw error;
+      setUser(data.session ? data.session.user : null);
+    } catch (err) {
+      show("authMessage", "Não foi possível verificar a sessão: " + (err.message || ""), true);
+    }
+  }
 
-        try {
-          const { error } = await supabase.from("leads").insert({
-            user_id: currentUser.id,
-            company_name: business.name,
-            contact_name: null,
-            email: business.email || null,
-            phone: business.phone || null,
-            notes
-          });
-
-          if (error) throw error;
-
-          button.textContent = "Salvo ✓";
-          message("leadsMessage", "Lead salvo na sua conta.");
-          await loadLeads();
-        } catch (error) {
-          button.textContent = "Salvar lead";
-          message("searchMessage",
-            "Não foi possível salvar. Confira a estrutura da tabela leads e as políticas RLS do Supabase. " +
-            (error.message || ""),
-            true);
-        } finally {
-          if (button.textContent !== "Salvo ✓") button.disabled = false;
-        }
-      }
-
-      async function loadLeads() {
-        if (!currentUser) return;
-
-        $("leadsList").replaceChildren();
-        addText($("leadsList"), "div", "Carregando seus leads...", "empty");
-
-        try {
-          const { data, error } = await supabase
-            .from("leads")
-            .select("*")
-            .eq("user_id", currentUser.id)
-            .order("created_at", { ascending: false })
-            .limit(100);
-
-          if (error) throw error;
-
-          const container = $("leadsList");
-          container.replaceChildren();
-
-          if (!data || data.length === 0) {
-            addText(container, "div",
-              "Você ainda não salvou leads. Pesquise empresas e toque em “Salvar lead”.",
-              "empty");
-            return;
-          }
-
-          data.forEach((lead) => {
-            const card = document.createElement("article");
-            card.className = "business";
-
-            addText(card, "h3", lead.company_name || "Empresa sem nome");
-
-            if (lead.phone) {
-              const p = addText(card, "p", "Telefone: ");
-              addLink(p, lead.phone, "tel:" + String(lead.phone).replace(/[^\d+]/g, ""));
-            }
-
-            if (lead.email) {
-              const p = addText(card, "p", "E-mail: ");
-              addLink(p, lead.email, "mailto:" + lead.email);
-            }
-
-            if (lead.contact_name) {
-              addText(card, "p", "Contato: " + lead.contact_name);
-            }
-
-            if (lead.notes) {
-              const details = document.createElement("details");
-              const summary = document.createElement("summary");
-              summary.textContent = "Ver endereço e detalhes";
-              details.appendChild(summary);
-              const pre = document.createElement("p");
-              pre.textContent = lead.notes;
-              details.appendChild(pre);
-              card.appendChild(details);
-            }
-
-            const actions = document.createElement("div");
-            actions.className = "actions";
-
-            const remove = document.createElement("button");
-            remove.type = "button";
-            remove.className = "danger";
-            remove.textContent = "Excluir lead";
-
-            remove.addEventListener("click", async () => {
-              if (!confirm("Deseja excluir este lead?")) return;
-
-              remove.disabled = true;
-
-              try {
-                const { error } = await supabase
-                  .from("leads")
-                  .delete()
-                  .eq("id", lead.id)
-                  .eq("user_id", currentUser.id);
-
-                if (error) throw error;
-
-                await loadLeads();
-                message("leadsMessage", "Lead excluído.");
-              } catch (error) {
-                message("leadsMessage", error.message || "Não foi possível excluir o lead.", true);
-                remove.disabled = false;
-              }
-            });
-
-            actions.appendChild(remove);
-            card.appendChild(actions);
-            container.appendChild(card);
-          });
-        } catch (error) {
-          $("leadsList").replaceChildren();
-          addText($("leadsList"), "div",
-            "Não foi possível carregar seus leads: " + (error.message || "erro"),
-            "empty");
-        }
-      }
-
-      $("refreshLeadsBtn").addEventListener("click", loadLeads);
-
-      async function initialize() {
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-          message("authMessage", error.message || "Erro ao verificar a sessão.", true);
-          return;
-        }
-
-        setAuthenticated(data.session ? data.session.user : null);
-      }
-
-      supabase.auth.onAuthStateChange((_event, session) => {
-        setAuthenticated(session ? session.user : null);
-      });
-
-      initialize();
-    })();
-  </script>
+  init();
+})();
+</script>
 </body>
 </html>
