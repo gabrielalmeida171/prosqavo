@@ -320,24 +320,68 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
     $("authSection").classList.remove("hidden");
   }
 
-  async function findCityCoordinates(city, uf) {
-    const query = city + ", " + uf + ", Brasil";
-    const url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&country=Brazil&q=" +
-      encodeURIComponent(query);
+  
+async function findCityCoordinates(city, uf) {
+  const query = `${city}, ${uf}, Brasil`;
+  const urls = [
+    "https://geocoding-api.open-meteo.com/v1/search?count=10&language=pt&format=json&name=" + encodeURIComponent(city),
+    "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&country=Brazil&q=" + encodeURIComponent(query)
+  ];
 
-    const response = await fetch(url, {
-      headers: {"Accept":"application/json"}
-    });
-    if (!response.ok) throw new Error("O serviço de localização está indisponível.");
-    const data = await response.json();
-    if (!data.length) {
-      throw new Error("Não encontrei a localização desta cidade. Tente novamente mais tarde.");
+  let lastError = null;
+
+  for (const url of urls) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
+
+      let response;
+      try {
+        response = await fetch(url, {
+          headers: { "Accept": "application/json" },
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timer);
+      }
+
+      if (!response.ok) {
+        throw new Error("Serviço de localização respondeu HTTP " + response.status);
+      }
+
+      const data = await response.json();
+      let matches = [];
+
+      if (url.includes("open-meteo")) {
+        matches = (data.results || []).filter(item =>
+          item.country_code === "BR" &&
+          (!item.admin1 || item.admin1.toLowerCase().includes(uf.toLowerCase()))
+        ).map(item => ({ lat: item.latitude, lon: item.longitude }));
+      } else {
+        matches = (data || []).map(item => ({
+          lat: Number(item.lat),
+          lon: Number(item.lon)
+        }));
+      }
+
+      if (matches.length && Number.isFinite(Number(matches[0].lat)) &&
+          Number.isFinite(Number(matches[0].lon))) {
+        return {
+          lat: Number(matches[0].lat),
+          lon: Number(matches[0].lon)
+        };
+      }
+    } catch (error) {
+      lastError = error;
     }
-    return {
-      lat: Number(data[0].lat),
-      lon: Number(data[0].lon)
-    };
   }
+
+  throw new Error(
+    "Não foi possível localizar essa cidade agora. Tente novamente. " +
+    (lastError ? "Os serviços de localização podem estar temporariamente indisponíveis." : "")
+  );
+}
+
 
   function makeQuery(lat, lon, radius, tags) {
     const clauses = tags.map(tag => {
