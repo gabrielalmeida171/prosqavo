@@ -5,876 +5,485 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#07110d">
-  <meta name="description" content="Prosqavo: prospecção de empresas e gestão de leads.">
+  <meta name="description" content="Prosqavo — prospecção e gestão de leads B2B">
   <title>Prosqavo — Prospecção B2B</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       color-scheme: dark;
       --bg: #07110d;
-      --panel: #101b15;
-      --border: #263b2e;
-      --green: #42e58a;
-      --muted: #a4b6aa;
-      --text: #f4fff7;
+      --panel: #101b16;
+      --border: #26372e;
+      --text: #f2f7f3;
+      --muted: #9aada1;
+      --green: #42df91;
+      --red: #ff7777;
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0; min-height: 100vh; background: var(--bg);
-      color: var(--text); font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
     }
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 12px; padding: 20px 6%; border-bottom: 1px solid var(--border);
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .wrap { width: min(100% - 32px, 1050px); margin: auto; }
+    header { padding: 22px 0; border-bottom: 1px solid var(--border); }
+    .brand { font-size: 25px; font-weight: 800; letter-spacing: -1px; }
+    .brand span, .green { color: var(--green); }
+    .hero { padding: 42px 0 24px; }
+    .eyebrow {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
-    .logo { color: var(--green); font-size: 26px; font-weight: 800; letter-spacing: -1px; }
-    .tagline, .muted { color: var(--muted); }
-    .tagline { font-size: 12px; }
-    main { width: min(100% - 28px, 900px); margin: 34px auto; }
-    h1 { font-size: clamp(32px, 7vw, 50px); letter-spacing: -2px; margin-bottom: 10px; }
-    h1 span, .lead strong { color: var(--green); }
+    h1 { font-size: clamp(32px, 7vw, 54px); line-height: 1.08; letter-spacing: -2px; }
+    h2 { margin-top: 0; font-size: 21px; }
     p { line-height: 1.6; }
+    .muted { color: var(--muted); }
     .panel {
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 16px; padding: 22px; margin: 20px 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      margin: 18px 0;
     }
-    label { display: block; margin: 14px 0 7px; font-size: 13px; color: #c9d9ce; }
-    input, select {
-      display: block; width: 100%; min-width: 0; padding: 13px;
-      background: #09130d; color: white; border: 1px solid #344b3a;
-      border-radius: 9px; font-size: 15px;
+    label { display: block; color: var(--muted); font-size: 13px; margin: 14px 0 7px; }
+    input, textarea {
+      display: block;
+      width: 100%;
+      background: #09130e;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 13px;
+      outline: none;
     }
-    button {
-      padding: 13px 16px; border: 0; border-radius: 9px;
-      font-size: 14px; font-weight: 700; cursor: pointer;
-    }
-    button:disabled { opacity: .5; cursor: wait; }
-    .primary { background: var(--green); color: #07110d; }
-    .secondary { background: transparent; border: 1px solid #45634d; color: white; }
-    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 17px; }
-    .actions button { flex: 1; }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+    input:focus, textarea:focus { border-color: var(--green); }
+    textarea { min-height: 80px; resize: vertical; }
+    button { border: 0; border-radius: 9px; padding: 13px 16px; font-weight: 700; }
+    .primary { background: var(--green); color: #06120b; }
+    .secondary { background: #1a2a21; color: var(--text); border: 1px solid var(--border); }
+    .danger { background: #351b1b; color: #ffb5b5; }
+    button:disabled { opacity: .55; cursor: wait; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
     .hidden { display: none !important; }
-    .status { min-height: 20px; font-size: 14px; overflow-wrap: anywhere; color: var(--green); }
-    .lead { border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-top: 12px; overflow-wrap: anywhere; }
-    .lead p { margin: 7px 0 0; font-size: 13px; color: var(--muted); }
-    .lead-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .lead-actions button { flex: 0 1 auto; }
-    .pill { display: inline-block; padding: 5px 9px; border: 1px solid var(--border); border-radius: 30px; color: var(--green); font-size: 12px; }
-    .result-count { color: var(--muted); font-size: 13px; }
-    a { color: var(--green); }
-    footer { text-align: center; color: var(--muted); padding: 24px; font-size: 12px; }
-    @media (max-width: 520px) {
+    .status { margin-top: 14px; font-size: 14px; overflow-wrap: anywhere; }
+    .error { color: var(--red); }
+    .success { color: var(--green); }
+    .topline { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .lead { border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-top: 12px; overflow-wrap: anywhere; }
+    .lead strong { display: block; margin-bottom: 7px; }
+    .lead small { display: block; color: var(--muted); margin-top: 5px; }
+    footer { color: var(--muted); font-size: 12px; text-align: center; padding: 32px 0; }
+    @media (max-width: 650px) {
       .grid { grid-template-columns: 1fr; }
       .panel { padding: 17px; }
-      header { padding: 17px 5%; }
-      main { margin-top: 25px; }
-      .tagline { max-width: 140px; text-align: right; }
     }
   </style>
 </head>
 <body>
-<header>
-  <div>
-    <div class="logo">prosqavo.</div>
-    <div class="tagline">Prospecção B2B inteligente</div>
-  </div>
-  <span class="tagline">Encontre seu próximo cliente.</span>
-</header>
+  <header>
+    <div class="wrap brand">Prosqavo<span>.</span></div>
+  </header>
 
-<main>
-  <section>
-    <h1>Encontre seu próximo <span>cliente.</span></h1>
-    <p class="muted">Descubra empresas, organize oportunidades e construa sua carteira de clientes em um só lugar.</p>
-  </section>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">Prospecção inteligente</div>
+      <h1>Encontre oportunidades.<br><span class="green">Conquiste clientes.</span></h1>
+      <p class="muted">Descubra oportunidades e organize seus potenciais clientes em um só lugar.</p>
+    </section>
 
-  <section id="auth-panel" class="panel">
-    <h2>Acesse o Prosqavo</h2>
-    <p class="muted">Entre na sua conta ou crie seu cadastro gratuito.</p>
-    <form id="auth-form">
-      <label for="email">E-mail</label>
-      <input id="email" type="email" autocomplete="email" placeholder="voce@email.com" required>
-      <label for="password">Senha</label>
-      <input id="password" type="password" minlength="6" autocomplete="current-password" placeholder="Mínimo de 6 caracteres" required>
-      <div class="actions">
-        <button class="primary" id="login-btn" type="submit">Entrar</button>
-        <button class="secondary" id="signup-btn" type="button">Criar conta</button>
-      </div>
-    </form>
-    <p id="auth-status" class="status" role="status"></p>
-  </section>
-
-  <section id="app-panel" class="hidden">
-    <div class="panel">
-      <p class="muted">Sua área de trabalho</p>
-      <h2>Bem-vindo ao Prosqavo</h2>
-      <p id="account-email" class="muted"></p>
-      <div class="grid">
-        <div><p class="muted">Seu plano</p><span id="plan-label" class="pill">Free</span></div>
-        <div><p class="muted">Pesquisas neste mês</p><strong id="quota-label">0 de 20 pesquisas</strong></div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>Buscar empresas no Brasil</h2>
-      <p class="muted">Pesquise estabelecimentos por cidade e segmento usando dados abertos do OpenStreetMap. A cobertura varia por região.</p>
-      <label for="search-city">Cidade e estado</label>
-      <input id="search-city" maxlength="120" placeholder="Ex.: Rio das Ostras, RJ">
-      <label for="search-type">Segmento</label>
-      <select id="search-type">
-        <option value="restaurant">Restaurantes</option>
-        <option value="beauty">Salões de beleza</option>
-        <option value="car_repair">Oficinas mecânicas</option>
-        <option value="clothes">Lojas de roupas</option>
-        <option value="dentist">Consultórios odontológicos</option>
-        <option value="supermarket">Mercados</option>
-        <option value="cafe">Cafeterias</option>
-        <option value="hotel">Hotéis e pousadas</option>
-        <option value="pharmacy">Farmácias</option>
-        <option value="commercial">Outros estabelecimentos comerciais</option>
-      </select>
-      <div class="actions"><button class="primary" id="search-businesses-btn" type="button">Buscar empresas</button></div>
-      <p id="business-search-status" class="status" role="status"></p>
-      <div id="business-search-results"></div>
-    </div>
-
-    <div class="panel">
-      <h2>Adicionar lead manualmente</h2>
-      <form id="lead-form">
-        <label for="company">Nome da empresa *</label>
-        <input id="company" required maxlength="200" placeholder="Ex.: Empresa ABC">
-        <div class="grid">
-          <div><label for="country">País</label><input id="country" maxlength="100" value="Brasil"></div>
-          <div><label for="city">Cidade</label><input id="city" maxlength="150" placeholder="Sua cidade"></div>
-        </div>
-        <label for="business-type">Tipo de negócio</label>
-        <input id="business-type" maxlength="150" placeholder="Ex.: Restaurante">
-        <label for="website">Site da empresa</label>
-        <input id="website" type="text" maxlength="500" placeholder="https://empresa.com">
+    <section id="auth-section" class="panel">
+      <h2>Acesse sua conta</h2>
+      <p class="muted">Entre ou crie sua conta gratuita.</p>
+      <form id="auth-form">
+        <label for="auth-email">E-mail</label>
+        <input id="auth-email" type="email" autocomplete="email" placeholder="voce@empresa.com" required>
+        <label for="auth-password">Senha</label>
+        <input id="auth-password" type="password" autocomplete="current-password" minlength="6" placeholder="Mínimo de 6 caracteres" required>
         <div class="actions">
-          <button class="primary" id="save-btn" type="submit">Salvar lead</button>
-          <button class="secondary" id="refresh-btn" type="button">Atualizar lista</button>
+          <button id="login-btn" class="primary" type="submit">Entrar</button>
+          <button id="signup-btn" class="secondary" type="button">Criar conta</button>
         </div>
       </form>
-      <p id="lead-status" class="status" role="status"></p>
-    </div>
+      <button id="reset-btn" class="secondary" type="button" style="margin-top:12px">Esqueci minha senha</button>
+      <div id="auth-status" class="status" role="status"></div>
+    </section>
 
-    <div class="panel">
-      <h2>Meus leads</h2>
-      <p class="muted">Empresas salvas na sua conta.</p>
-      <div id="lead-list"></div>
-    </div>
+    <section id="app-section" class="hidden">
+      <div class="panel topline">
+        <div>
+          <h2>Seu painel</h2>
+          <div id="user-email" class="muted"></div>
+        </div>
+        <button id="logout-btn" class="secondary" type="button">Sair</button>
+      </div>
 
-    <div class="panel">
-      <h2>Prosqavo Pro</h2>
-      <p class="muted">Plano planejado: R$ 29,90/mês. Pagamentos e benefícios pagos ainda não estão ativados.</p>
-    </div>
-    <button id="logout-btn" class="secondary" type="button">Sair da conta</button>
-  </section>
-</main>
-<footer>Prosqavo · Prospecção B2B · Dados de mapas: OpenStreetMap</footer>
+      <div class="grid">
+        <section class="panel">
+          <h2>Adicionar lead</h2>
+          <p class="muted">Cadastre uma empresa para acompanhar a oportunidade.</p>
+          <form id="lead-form">
+            <label for="company">Nome da empresa *</label>
+            <input id="company" maxlength="150" required placeholder="Ex.: Empresa ABC">
+            <label for="contact">Nome do contato</label>
+            <input id="contact" maxlength="150" placeholder="Nome do responsável">
+            <label for="email">E-mail comercial</label>
+            <input id="email" type="email" maxlength="254" placeholder="contato@empresa.com">
+            <label for="phone">Telefone</label>
+            <input id="phone" maxlength="40" placeholder="+55 ...">
+            <label for="notes">Observações</label>
+            <textarea id="notes" maxlength="2000" placeholder="Informações sobre a oportunidade"></textarea>
+            <div class="actions">
+              <button id="save-lead-btn" class="primary" type="submit">Salvar lead</button>
+            </div>
+          </form>
+          <div id="lead-status" class="status" role="status"></div>
+        </section>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(function () {
-  "use strict";
-  const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
-  const $ = id => document.getElementById(id);
-  const authPanel = $("auth-panel");
-  const appPanel = $("app-panel");
-  const authStatus = $("auth-status");
-  const leadStatus = $("lead-status");
-  const searchStatus = $("business-search-status");
+        <section class="panel">
+          <h2>Encontrar empresas</h2>
+          <p class="muted">Pesquise empresas na web e registre as oportunidades nos seus leads.</p>
+          <form id="web-search-form">
+            <label for="search-term">Empresa, setor ou cidade</label>
+            <input id="search-term" maxlength="200" placeholder="Ex.: oficinas em Macaé" required>
+            <div class="actions">
+              <button class="primary" type="submit">Pesquisar na web</button>
+            </div>
+          </form>
+          <p class="muted" style="font-size:13px">
+            Esta versão abre resultados de pesquisa externos. A integração com uma base de empresas e a cota Free de 20 pesquisas mensais ainda precisam ser implementadas.
+          </p>
+        </section>
+      </div>
 
-  if (!window.supabase) {
-    authStatus.textContent = "Não foi possível carregar o Supabase. Verifique a conexão.";
-    return;
-  }
+      <section class="panel">
+        <div class="topline">
+          <h2>Meus leads</h2>
+          <button id="refresh-btn" class="secondary" type="button">Atualizar lista</button>
+        </div>
+        <div id="leads-status" class="status" role="status"></div>
+        <div id="leads-list"></div>
+      </section>
+    </section>
+  </main>
 
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let currentPlan = "free";
-  let currentUsage = 0;
+  <footer>Prosqavo · Prospecção B2B</footer>
 
-  function status(element, message, error) {
-    element.textContent = message;
-    element.style.color = error ? "#ff9292" : "#42e58a";
-  }
+  <script>
+    (() => {
+      "use strict";
 
-  async function getUser() {
-    const { data, error } = await db.auth.getUser();
-    if (error || !data.user) throw new Error("Sua sessão expirou. Entre novamente.");
-    return data.user;
-  }
+      const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
 
-  async function loadPlanAndUsage() {
-    const user = await getUser();
-    const { data: profile, error: profileError } = await db
-      .from("profiles").select("plan").eq("user_id", user.id).maybeSingle();
-    if (profileError) throw profileError;
+      const $ = id => document.getElementById(id);
+      let db;
+      let currentUser = null;
+      let busyLoading = false;
 
-    currentPlan = profile && profile.plan === "pro" ? "pro" : "free";
-    const now = new Date();
-    const month = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-01";
-    const { data: usage, error: usageError } = await db
-      .from("search_usage").select("searches_used")
-      .eq("user_id", user.id).eq("month_start", month).maybeSingle();
-    if (usageError) throw usageError;
-
-    currentUsage = usage ? Number(usage.searches_used) : 0;
-    $("plan-label").textContent = currentPlan === "pro" ? "Pro" : "Free";
-    $("quota-label").textContent = currentPlan === "pro"
-      ? currentUsage + " pesquisas registradas"
-      : currentUsage + " de 20 pesquisas";
-  }
-
-  async function loadLeads() {
-    const { data, error } = await db.from("leads")
-      .select("id, company_name, country, city, business_type, website")
-      .order("id", { ascending: false }).limit(100);
-    if (error) {
-      status(leadStatus, "Erro ao carregar leads: " + error.message, true);
-      return;
-    }
-
-    const list = $("lead-list");
-    list.replaceChildren();
-    if (!data || !data.length) {
-      const empty = document.createElement("p");
-      empty.className = "muted";
-      empty.textContent = "Nenhum lead salvo ainda.";
-      list.appendChild(empty);
-      return;
-    }
-
-    data.forEach(lead => {
-      const card = document.createElement("article");
-      card.className = "lead";
-      const title = document.createElement("strong");
-      title.textContent = lead.company_name || "Empresa sem nome";
-      card.appendChild(title);
-      const details = [lead.business_type, [lead.city, lead.country].filter(Boolean).join(", ")]
-        .filter(Boolean).join(" · ");
-      if (details) {
-        const p = document.createElement("p");
-        p.textContent = details;
-        card.appendChild(p);
-      }
-      if (lead.website) {
-        const p = document.createElement("p");
-        p.textContent = "Site: " + lead.website;
-        card.appendChild(p);
-      }
-      list.appendChild(card);
-    });
-    status(leadStatus, data.length + " lead(s) carregado(s).", false);
-  }
-
-  async function updateSession() {
-    const { data, error } = await db.auth.getSession();
-    if (error) {
-      status(authStatus, "Erro de sessão: " + error.message, true);
-      return;
-    }
-    const user = data.session && data.session.user;
-    authPanel.classList.toggle("hidden", Boolean(user));
-    appPanel.classList.toggle("hidden", !user);
-    if (user) {
-      $("account-email").textContent = "Conectado: " + user.email;
-      try {
-        await loadPlanAndUsage();
-        await loadLeads();
-      } catch (err) {
-        status(leadStatus, "Erro ao carregar sua conta: " + err.message, true);
-      }
-    }
-  }
-
-  $("auth-form").addEventListener("submit", async event => {
-    event.preventDefault();
-    $("login-btn").disabled = true;
-    status(authStatus, "Verificando login...", false);
-    try {
-      const { error } = await db.auth.signInWithPassword({
-        email: $("email").value.trim(), password: $("password").value
-      });
-      if (error) status(authStatus, "Erro no login: " + error.message, true);
-      else {
-        status(authStatus, "Login realizado!", false);
-        await updateSession();
-      }
-    } catch (err) {
-      status(authStatus, "Erro de conexão: " + err.message, true);
-    } finally {
-      $("login-btn").disabled = false;
-    }
-  });
-
-  $("signup-btn").addEventListener("click", async () => {
-    const email = $("email").value.trim();
-    const password = $("password").value;
-    if (!email || password.length < 6) {
-      status(authStatus, "Informe um e-mail válido e senha de pelo menos 6 caracteres.", true);
-      return;
-    }
-    $("signup-btn").disabled = true;
-    status(authStatus, "Criando sua conta...", false);
-    try {
-      const { data, error } = await db.auth.signUp({ email, password });
-      if (error) status(authStatus, "Erro no cadastro: " + error.message, true);
-      else if (data.session) {
-        status(authStatus, "Conta criada!", false);
-        await updateSession();
-      } else {
-        status(authStatus, "Cadastro iniciado. Confirme seu e-mail e depois entre.", false);
-      }
-    } catch (err) {
-      status(authStatus, "Erro de conexão: " + err.message, true);
-    } finally {
-      $("signup-btn").disabled = false;
-    }
-  });
-
-  $("search-businesses-btn").addEventListener("click", async () => {
-    const city = $("search-city").value.trim();
-    const type = $("search-type").value;
-
-    if (city.length < 2) {
-      status(searchStatus, "Digite uma cidade e estado.", true);
-      return;
-    }
-
-    const button = $("search-businesses-btn");
-    button.disabled = true;
-    $("business-search-results").replaceChildren();
-
-    try {
-      status(searchStatus, "Validando sua cota...", false);
-
-      const { data: quotaData, error: quotaError } =
-        await db.rpc("register_search");
-
-      if (quotaError) {
-        throw new Error(
-          "Não foi possível validar a cota. Verifique a função register_search no Supabase."
-        );
+      function status(id, message, type = "") {
+        const el = $(id);
+        el.textContent = message;
+        el.className = "status" + (type ? " " + type : "");
       }
 
-      if (quotaData === false ||
-          (quotaData && quotaData.allowed === false)) {
-        throw new Error("Você atingiu o limite de pesquisas do seu plano.");
+      function errorMessage(error) {
+        const message = error?.message || "Erro inesperado.";
+        if (/Invalid login credentials/i.test(message)) return "E-mail ou senha incorretos.";
+        if (/User already registered/i.test(message)) return "Este e-mail já está cadastrado. Tente entrar.";
+        if (/Email not confirmed/i.test(message)) return "Confirme seu e-mail antes de entrar.";
+        if (/Failed to fetch|NetworkError/i.test(message)) return "Falha de conexão. Verifique a internet.";
+        return message;
       }
 
-      status(searchStatus, "Localizando a cidade...", false);
-
-      const geoResponse = await fetch(
-        "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
-        encodeURIComponent(city)
-      );
-
-      if (!geoResponse.ok) {
-        throw new Error("O serviço de mapas está indisponível. Tente novamente.");
+      function setBusy(id, busy, busyText) {
+        const button = $(id);
+        if (busy) {
+          button.dataset.originalText = button.textContent;
+          button.textContent = busyText;
+          button.disabled = true;
+        } else {
+          button.textContent = button.dataset.originalText || button.textContent;
+          button.disabled = false;
+        }
       }
 
-      const geoData = await geoResponse.json();
-
-      if (!geoData.length) {
-        throw new Error("Cidade não encontrada. Tente informar cidade e estado.");
+      function renderSession(user) {
+        currentUser = user || null;
+        $("auth-section").classList.toggle("hidden", !!currentUser);
+        $("app-section").classList.toggle("hidden", !currentUser);
+        $("user-email").textContent = currentUser?.email || "";
       }
 
-      const place = geoData[0];
-      const south = Number(place.boundingbox[0]);
-      const north = Number(place.boundingbox[1]);
-      const west = Number(place.boundingbox[2]);
-      const east = Number(place.boundingbox[3]);
+      async function loadLeads() {
+        if (!currentUser || busyLoading) return;
+        busyLoading = true;
+        status("leads-status", "Carregando leads...");
 
-      const filters = {
-        restaurant: ['["amenity"="restaurant"]'],
-        beauty: [
-          '["shop"="beauty"]',
-          '["craft"="beautician"]',
-          '["shop"="hairdresser"]'
-        ],
-        car_repair: [
-          '["shop"="car_repair"]',
-          '["shop"="car"]'
-        ],
-        clothes: ['["shop"="clothes"]'],
-        dentist: ['["amenity"="dentist"]'],
-        supermarket: ['["shop"="supermarket"]'],
-        cafe: ['["amenity"="cafe"]'],
-        hotel: [
-          '["tourism"="hotel"]',
-          '["tourism"="guest_house"]'
-        ],
-        pharmacy: ['["amenity"="pharmacy"]'],
-        commercial: ['["shop"]', '["office"]']
-      };
-
-      const selectedFilters = filters[type] || filters.commercial;
-      const queryParts = selectedFilters.map(filter =>
-        `node${filter}(${south},${west},${north},${east});` +
-        `way${filter}(${south},${west},${north},${east});` +
-        `relation${filter}(${south},${west},${north},${east});`
-      ).join("");
-
-      const query =
-        `[out:json][timeout:25];(${queryParts});out center tags 60;`;
-
-      status(searchStatus, "Buscando empresas nos mapas...", false);
-
-      const endpoints = [
-        "https://overpass-api.de/api/interpreter",
-        "https://overpass.kumi.systems/api/interpreter"
-      ];
-
-      let results = null;
-
-      for (const endpoint of endpoints) {
         try {
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "data=" + encodeURIComponent(query)
-          });
+          const { data, error } = await db
+            .from("leads")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .order("created_at", { ascending: false })
+            .limit(100);
 
-          if (response.ok) {
-            results = await response.json();
-            break;
+          if (error) throw error;
+          renderLeads(data || []);
+          status("leads-status", `${(data || []).length} lead(s) carregado(s).`, "success");
+        } catch (error) {
+          status("leads-status", "Não foi possível carregar os leads: " + errorMessage(error), "error");
+        } finally {
+          busyLoading = false;
+        }
+      }
+
+      function renderLeads(leads) {
+        const list = $("leads-list");
+        list.replaceChildren();
+
+        if (!leads.length) {
+          const empty = document.createElement("p");
+          empty.className = "muted";
+          empty.textContent = "Você ainda não tem leads cadastrados.";
+          list.appendChild(empty);
+          return;
+        }
+
+        for (const lead of leads) {
+          const card = document.createElement("article");
+          card.className = "lead";
+
+          const title = document.createElement("strong");
+          title.textContent = lead.company_name || lead.company || lead.name || "Empresa sem nome";
+          card.appendChild(title);
+
+          const fields = [
+            ["Contato", lead.contact_name || lead.contact],
+            ["E-mail", lead.email],
+            ["Telefone", lead.phone],
+            ["Observações", lead.notes]
+          ];
+
+          for (const [label, value] of fields) {
+            if (!value) continue;
+            const line = document.createElement("div");
+            line.textContent = `${label}: ${value}`;
+            card.appendChild(line);
+          }
+
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "danger";
+          remove.style.marginTop = "12px";
+          remove.textContent = "Excluir lead";
+          remove.addEventListener("click", () => deleteLead(lead.id, remove));
+          card.appendChild(remove);
+
+          list.appendChild(card);
+        }
+      }
+
+      async function deleteLead(id, button) {
+        if (!currentUser || !id) {
+          status("leads-status", "Não foi possível identificar esse lead.", "error");
+          return;
+        }
+        if (!window.confirm("Deseja excluir este lead?")) return;
+
+        button.disabled = true;
+        try {
+          const { error } = await db.from("leads")
+            .delete()
+            .eq("id", id)
+            .eq("user_id", currentUser.id);
+
+          if (error) throw error;
+          status("leads-status", "Lead excluído.", "success");
+          await loadLeads();
+        } catch (error) {
+          status("leads-status", "Erro ao excluir: " + errorMessage(error), "error");
+          button.disabled = false;
+        }
+      }
+
+      $("auth-form").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const email = $("auth-email").value.trim();
+        const password = $("auth-password").value;
+
+        setBusy("login-btn", true, "Entrando...");
+        status("auth-status", "");
+
+        try {
+          const { data, error } = await db.auth.signInWithPassword({
+            email,
+            password
+          });
+          if (error) throw error;
+
+          renderSession(data.user);
+          status("auth-status", "Login realizado!", "success");
+          await loadLeads();
+        } catch (error) {
+          status("auth-status", errorMessage(error), "error");
+        } finally {
+          setBusy("login-btn", false);
+        }
+      });
+
+      $("signup-btn").addEventListener("click", async () => {
+        const email = $("auth-email").value.trim();
+        const password = $("auth-password").value;
+
+        if (!email || password.length < 6) {
+          status("auth-status", "Informe um e-mail válido e uma senha com pelo menos 6 caracteres.", "error");
+          return;
+        }
+
+        setBusy("signup-btn", true, "Criando conta...");
+        status("auth-status", "");
+
+        try {
+          const { data, error } = await db.auth.signUp({ email, password });
+          if (error) throw error;
+
+          if (data.session) {
+            renderSession(data.user);
+            status("auth-status", "Conta criada com sucesso!", "success");
+            await loadLeads();
+          } else {
+            status("auth-status", "Cadastro enviado! Confira seu e-mail para confirmar a conta e depois entre.", "success");
           }
         } catch (error) {
-          // Tenta o próximo serviço público de mapas.
+          status("auth-status", errorMessage(error), "error");
+        } finally {
+          setBusy("signup-btn", false);
         }
-      }
-
-      if (!results) {
-        throw new Error("Os mapas estão ocupados. Aguarde um pouco e tente novamente.");
-      }
-
-      const container = $("business-search-results");
-      container.replaceChildren();
-
-      if (!results.elements || results.elements.length === 0) {
-        status(searchStatus, "Nenhuma empresa encontrada nessa região e categoria.", false);
-        return;
-      }
-
-      const heading = document.createElement("p");
-      heading.className = "result-count";
-      heading.textContent = "Empresas encontradas: " + results.elements.length;
-      container.appendChild(heading);
-
-      results.elements.forEach(item => {
-        const tags = item.tags || {};
-        const name = tags.name || tags.brand || "Empresa sem nome cadastrado";
-        const address = [
-          tags["addr:street"],
-          tags["addr:housenumber"],
-          tags["addr:suburb"]
-        ].filter(Boolean).join(", ");
-
-        const card = document.createElement("article");
-        card.className = "lead";
-
-        const title = document.createElement("strong");
-        title.textContent = name;
-        card.appendChild(title);
-
-        const detail = document.createElement("p");
-        detail.textContent = address || "Endereço não informado no mapa";
-        card.appendChild(detail);
-
-        if (tags.website && /^https?:\/\//i.test(tags.website)) {
-          const link = document.createElement("a");
-          link.href = tags.website;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = "Visitar site";
-          card.appendChild(link);
-        }
-
-        const saveButton = document.createElement("button");
-        saveButton.className = "primary";
-        saveButton.style.marginTop = "12px";
-        saveButton.textContent = "Salvar como lead";
-
-        saveButton.addEventListener("click", async () => {
-          saveButton.disabled = true;
-
-          try {
-            const user = await getUser();
-
-            const { error } = await db.from("leads").insert({
-              user_id: user.id,
-              company_name: name,
-              country: "Brasil",
-              city: city,
-              business_type: type,
-              website: tags.website || null
-            });
-
-            if (error) throw error;
-
-            status(searchStatus, "Lead salvo: " + name, false);
-            await loadLeads();
-          } catch (error) {
-            status(searchStatus, "Não foi possível salvar: " + error.message, true);
-          } finally {
-            saveButton.disabled = false;
-          }
-        });
-
-        card.appendChild(saveButton);
-        container.appendChild(card);
       });
 
-      status(searchStatus, "Pesquisa concluída. Os dados vêm do OpenStreetMap.", false);
+      $("reset-btn").addEventListener("click", async () => {
+        const email = $("auth-email").value.trim();
 
-    } catch (error) {
-      status(searchStatus, error.message || "Erro ao pesquisar empresas.", true);
-    } finally {
-      button.disabled = false;
-      try {
-        await loadPlanAndUsage();
-      } catch (error) {
-        // A interface continua funcionando mesmo se a cota não atualizar.
-      }
-    }
-  });
+        if (!email) {
+          status("auth-status", "Digite seu e-mail primeiro.", "error");
+          return;
+        }
 
-  $("lead-form").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const button = $("save-btn");
-    button.disabled = true;
-
-    try {
-      const user = await getUser();
-      const websiteInput = $("website").value.trim();
-      let website = null;
-
-      if (websiteInput) {
-        website = /^https?:\/\//i.test(websiteInput)
-          ? websiteInput
-          : "https://" + websiteInput;
-      }
-
-      const { error } = await db.from("leads").insert({
-        user_id: user.id,
-        company_name: $("company").value.trim(),
-        country: $("country").value.trim() || "Brasil",
-        city: $("city").value.trim() || null,
-        business_type: $("business-type").value.trim() || null,
-        website: website
-      });
-
-      if (error) throw error;
-
-      $("lead-form").reset();
-      $("country").value = "Brasil";
-      status(leadStatus, "Lead salvo com sucesso!", false);
-      await loadLeads();
-
-    } catch (error) {
-      status(leadStatus, "Erro ao salvar lead: " + error.message, true);
-    } finally {
-      button.disabled = false;
-    }
-  });
-
-  $("refresh-btn").addEventListener("click", loadLeads);
-
-  $("logout-btn").addEventListener("click", async () => {
-    const { error } = await db.auth.signOut();
-
-    if (error) {
-      status(leadStatus, "Erro ao sair: " + error.message, true);
-      return;
-    }
-
-    $("business-search-results").replaceChildren();
-    status(authStatus, "Você saiu da conta.", false);
-    await updateSession();
-  });
-
-  db.auth.onAuthStateChange(() => {
-    updateSession();
-  });
-
-  updateSession();
-})();
-
-  $("search-businesses-btn").addEventListener("click", async () => {
-    const city = $("search-city").value.trim();
-    const type = $("search-type").value;
-
-    if (city.length < 2) {
-      status(searchStatus, "Digite uma cidade e estado.", true);
-      return;
-    }
-
-    const button = $("search-businesses-btn");
-    button.disabled = true;
-    $("business-search-results").replaceChildren();
-
-    try {
-      status(searchStatus, "Validando sua cota...", false);
-
-      const { data: quotaData, error: quotaError } =
-        await db.rpc("register_search");
-
-      if (quotaError) {
-        throw new Error(
-          "Não foi possível validar a cota. Verifique a função register_search no Supabase."
-        );
-      }
-
-      if (quotaData === false ||
-          (quotaData && quotaData.allowed === false)) {
-        throw new Error("Você atingiu o limite de pesquisas do seu plano.");
-      }
-
-      status(searchStatus, "Localizando a cidade...", false);
-
-      const geoResponse = await fetch(
-        "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
-        encodeURIComponent(city)
-      );
-
-      if (!geoResponse.ok) {
-        throw new Error("O serviço de mapas está indisponível. Tente novamente.");
-      }
-
-      const geoData = await geoResponse.json();
-
-      if (!geoData.length) {
-        throw new Error("Cidade não encontrada. Tente informar cidade e estado.");
-      }
-
-      const place = geoData[0];
-      const south = Number(place.boundingbox[0]);
-      const north = Number(place.boundingbox[1]);
-      const west = Number(place.boundingbox[2]);
-      const east = Number(place.boundingbox[3]);
-
-      const filters = {
-        restaurant: ['["amenity"="restaurant"]'],
-        beauty: [
-          '["shop"="beauty"]',
-          '["craft"="beautician"]',
-          '["shop"="hairdresser"]'
-        ],
-        car_repair: [
-          '["shop"="car_repair"]',
-          '["shop"="car"]'
-        ],
-        clothes: ['["shop"="clothes"]'],
-        dentist: ['["amenity"="dentist"]'],
-        supermarket: ['["shop"="supermarket"]'],
-        cafe: ['["amenity"="cafe"]'],
-        hotel: [
-          '["tourism"="hotel"]',
-          '["tourism"="guest_house"]'
-        ],
-        pharmacy: ['["amenity"="pharmacy"]'],
-        commercial: ['["shop"]', '["office"]']
-      };
-
-      const selectedFilters = filters[type] || filters.commercial;
-      const queryParts = selectedFilters.map(filter =>
-        `node${filter}(${south},${west},${north},${east});` +
-        `way${filter}(${south},${west},${north},${east});` +
-        `relation${filter}(${south},${west},${north},${east});`
-      ).join("");
-
-      const query =
-        `[out:json][timeout:25];(${queryParts});out center tags 60;`;
-
-      status(searchStatus, "Buscando empresas nos mapas...", false);
-
-      const endpoints = [
-        "https://overpass-api.de/api/interpreter",
-        "https://overpass.kumi.systems/api/interpreter"
-      ];
-
-      let results = null;
-
-      for (const endpoint of endpoints) {
         try {
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "data=" + encodeURIComponent(query)
+          const { error } = await db.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin
           });
+          if (error) throw error;
 
-          if (response.ok) {
-            results = await response.json();
-            break;
-          }
+          status("auth-status", "Se o e-mail estiver cadastrado, você receberá as instruções de recuperação.", "success");
         } catch (error) {
-          // Tenta o próximo serviço público de mapas.
+          status("auth-status", errorMessage(error), "error");
+        }
+      });
+
+      $("logout-btn").addEventListener("click", async () => {
+        try {
+          const { error } = await db.auth.signOut();
+          if (error) throw error;
+
+          renderSession(null);
+          $("leads-list").replaceChildren();
+          status("auth-status", "Você saiu da sua conta.", "success");
+        } catch (error) {
+          status("leads-status", errorMessage(error), "error");
+        }
+      });
+
+      $("lead-form").addEventListener("submit", async event => {
+        event.preventDefault();
+
+        if (!currentUser) {
+          status("lead-status", "Entre na sua conta primeiro.", "error");
+          return;
+        }
+
+        const company = $("company").value.trim();
+        if (!company) {
+          status("lead-status", "Informe o nome da empresa.", "error");
+          return;
+        }
+
+        const lead = {
+          user_id: currentUser.id,
+          company_name: company,
+          contact_name: $("contact").value.trim() || null,
+          email: $("email").value.trim() || null,
+          phone: $("phone").value.trim() || null,
+          notes: $("notes").value.trim() || null
+        };
+
+        setBusy("save-lead-btn", true, "Salvando...");
+        status("lead-status", "");
+
+        try {
+          const { error } = await db.from("leads").insert(lead);
+          if (error) throw error;
+
+          $("lead-form").reset();
+          status("lead-status", "Lead salvo com sucesso!", "success");
+          await loadLeads();
+        } catch (error) {
+          status(
+            "lead-status",
+            "Não foi possível salvar. Confira se a tabela leads possui as colunas user_id, company_name, contact_name, email, phone e notes, e se a política RLS permite inserir os próprios leads. Detalhe: " + errorMessage(error),
+            "error"
+          );
+        } finally {
+          setBusy("save-lead-btn", false);
+        }
+      });
+
+      $("refresh-btn").addEventListener("click", loadLeads);
+
+      $("web-search-form").addEventListener("submit", event => {
+        event.preventDefault();
+        const term = $("search-term").value.trim();
+        if (!term) return;
+
+        const url = "https://www.google.com/search?q=" + encodeURIComponent(term);
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+
+      async function initialize() {
+        try {
+          const { data, error } = await db.auth.getSession();
+          if (error) throw error;
+
+          renderSession(data.session?.user || null);
+
+          if (currentUser) await loadLeads();
+        } catch (error) {
+          status("auth-status", "Erro ao conectar ao Supabase: " + errorMessage(error), "error");
         }
       }
 
-      if (!results) {
-        throw new Error("Os mapas estão ocupados. Aguarde um pouco e tente novamente.");
-      }
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const container = $("business-search-results");
-      container.replaceChildren();
+      db.auth.onAuthStateChange((event, session) => {
+        renderSession(session?.user || null);
 
-      if (!results.elements || results.elements.length === 0) {
-        status(searchStatus, "Nenhuma empresa encontrada nessa região e categoria.", false);
-        return;
-      }
-
-      const heading = document.createElement("p");
-      heading.className = "result-count";
-      heading.textContent = "Empresas encontradas: " + results.elements.length;
-      container.appendChild(heading);
-
-      results.elements.forEach(item => {
-        const tags = item.tags || {};
-        const name = tags.name || tags.brand || "Empresa sem nome cadastrado";
-        const address = [
-          tags["addr:street"],
-          tags["addr:housenumber"],
-          tags["addr:suburb"]
-        ].filter(Boolean).join(", ");
-
-        const card = document.createElement("article");
-        card.className = "lead";
-
-        const title = document.createElement("strong");
-        title.textContent = name;
-        card.appendChild(title);
-
-        const detail = document.createElement("p");
-        detail.textContent = address || "Endereço não informado no mapa";
-        card.appendChild(detail);
-
-        if (tags.website && /^https?:\/\//i.test(tags.website)) {
-          const link = document.createElement("a");
-          link.href = tags.website;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = "Visitar site";
-          card.appendChild(link);
+        if (session?.user) {
+          loadLeads();
+        } else {
+          $("leads-list").replaceChildren();
         }
-
-        const saveButton = document.createElement("button");
-        saveButton.className = "primary";
-        saveButton.style.marginTop = "12px";
-        saveButton.textContent = "Salvar como lead";
-
-        saveButton.addEventListener("click", async () => {
-          saveButton.disabled = true;
-
-          try {
-            const user = await getUser();
-
-            const { error } = await db.from("leads").insert({
-              user_id: user.id,
-              company_name: name,
-              country: "Brasil",
-              city: city,
-              business_type: type,
-              website: tags.website || null
-            });
-
-            if (error) throw error;
-
-            status(searchStatus, "Lead salvo: " + name, false);
-            await loadLeads();
-          } catch (error) {
-            status(searchStatus, "Não foi possível salvar: " + error.message, true);
-          } finally {
-            saveButton.disabled = false;
-          }
-        });
-
-        card.appendChild(saveButton);
-        container.appendChild(card);
       });
 
-      status(searchStatus, "Pesquisa concluída. Os dados vêm do OpenStreetMap.", false);
-
-    } catch (error) {
-      status(searchStatus, error.message || "Erro ao pesquisar empresas.", true);
-    } finally {
-      button.disabled = false;
-      try {
-        await loadPlanAndUsage();
-      } catch (error) {
-        // A interface continua funcionando mesmo se a cota não atualizar.
-      }
-    }
-  });
-
-  $("lead-form").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    const button = $("save-btn");
-    button.disabled = true;
-
-    try {
-      const user = await getUser();
-      const websiteInput = $("website").value.trim();
-      let website = null;
-
-      if (websiteInput) {
-        website = /^https?:\/\//i.test(websiteInput)
-          ? websiteInput
-          : "https://" + websiteInput;
-      }
-
-      const { error } = await db.from("leads").insert({
-        user_id: user.id,
-        company_name: $("company").value.trim(),
-        country: $("country").value.trim() || "Brasil",
-        city: $("city").value.trim() || null,
-        business_type: $("business-type").value.trim() || null,
-        website: website
-      });
-
-      if (error) throw error;
-
-      $("lead-form").reset();
-      $("country").value = "Brasil";
-      status(leadStatus, "Lead salvo com sucesso!", false);
-      await loadLeads();
-
-    } catch (error) {
-      status(leadStatus, "Erro ao salvar lead: " + error.message, true);
-    } finally {
-      button.disabled = false;
-    }
-  });
-
-  $("refresh-btn").addEventListener("click", loadLeads);
-
-  $("logout-btn").addEventListener("click", async () => {
-    const { error } = await db.auth.signOut();
-
-    if (error) {
-      status(leadStatus, "Erro ao sair: " + error.message, true);
-      return;
-    }
-
-    $("business-search-results").replaceChildren();
-    status(authStatus, "Você saiu da conta.", false);
-    await updateSession();
-  });
-
-  db.auth.onAuthStateChange(() => {
-    updateSession();
-  });
-
-  updateSession();
-})();
-</script>
+      initialize();
+    })();
+  </script>
 </body>
 </html>
