@@ -3,416 +3,524 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prosqavo — AI Prospecting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07110d">
+  <title>Prosqavo — B2B Prospecting</title>
   <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07110d;
+      --panel: #101b15;
+      --border: #263b2e;
+      --green: #42e58a;
+      --muted: #a4b6aa;
+      --text: #f4fff7;
+    }
+
     * { box-sizing: border-box; }
+
     body {
-      margin: 0; background: #0b0e0c; color: #f4f7f4;
-      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
     }
+
     header {
-      padding: 22px; border-bottom: 1px solid #242a25;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 6%;
+      border-bottom: 1px solid var(--border);
     }
-    .logo { font-size: 23px; font-weight: 800; }
-    .logo span { color: #b9f56b; }
-    .tag { color: #b9f56b; font-size: 11px; }
-    main { max-width: 850px; margin: auto; padding: 25px 18px; }
-    h1 { font-size: 34px; margin-bottom: 8px; }
-    p { color: #a6afa7; line-height: 1.5; }
-    .accent { color: #b9f56b; }
+
+    .logo {
+      color: var(--green);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .tagline { color: var(--muted); font-size: 12px; }
+
+    main {
+      width: min(100% - 32px, 850px);
+      margin: 42px auto;
+    }
+
+    h1 {
+      font-size: clamp(32px, 7vw, 52px);
+      letter-spacing: -2px;
+      margin: 0 0 14px;
+    }
+
+    h1 span { color: var(--green); }
+
+    p { line-height: 1.6; }
+
+    .muted { color: var(--muted); }
+
     .panel {
-      background: #141915; border: 1px solid #29312a;
-      border-radius: 16px; padding: 19px; margin-top: 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
     }
-    label { display: block; margin: 15px 0 8px; font-size: 13px; }
-    input, select, button {
-      width: 100%; padding: 14px; border-radius: 10px;
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #c9d9ce;
+      margin: 14px 0 7px;
+    }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      padding: 13px;
+      color: white;
+      background: #09130d;
+      border: 1px solid #344b3a;
+      border-radius: 9px;
       font-size: 15px;
     }
-    input, select {
-      background: #0b0e0c; border: 1px solid #394239;
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled { opacity: .55; }
+
+    .primary {
+      background: var(--green);
+      color: #07110d;
+    }
+
+    .secondary {
+      background: transparent;
+      border: 1px solid #45634d;
       color: white;
     }
-    button {
-      margin-top: 15px; background: #b9f56b; color: #10150c;
-      border: 0; font-weight: 800; cursor: pointer;
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
     }
-    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .stat { background: #1b211c; padding: 16px; border-radius: 12px; }
-    .number { font-size: 26px; font-weight: bold; }
-    #results { margin-top: 16px; }
-    .business {
-      padding: 14px 0; border-bottom: 1px solid #303630;
+
+    .actions button { flex: 1; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 14px;
     }
-    .business strong { display: block; margin-bottom: 5px; }
-    small { color: #b9f56b; }
-    footer { text-align: center; padding: 25px; color: #687169; }
+
+    .hidden { display: none !important; }
+
+    .status {
+      overflow-wrap: anywhere;
+      font-size: 14px;
+      color: var(--green);
+      min-height: 20px;
+    }
+
+    .lead {
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .lead strong { color: var(--green); }
+
+    .lead p {
+      margin: 7px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    a { color: var(--green); }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 25px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .grid { grid-template-columns: 1fr; }
+      .panel { padding: 18px; }
+      header { padding: 18px 5%; }
+      main { margin-top: 30px; }
+    }
   </style>
 </head>
+
 <body>
   <header>
-    <div class="logo">Prosqavo<span>.</span></div>
-    <div class="tag">AI PROSPECTING</div>
+    <div>
+      <div class="logo">prosqavo.</div>
+      <div class="tagline">B2B Prospecting Platform</div>
+    </div>
+    <span class="tagline">Find your next client.</span>
   </header>
 
   <main>
-    <p class="accent">YOUR SALES WORKSPACE</p>
-    <h1>Find your next <span class="accent">client.</span></h1>
-    <p>Discover business opportunities and prepare smarter outreach with AI.</p>
+    <section>
+      <h1>Find your next <span>client.</span></h1>
+      <p class="muted">
+        Organize business prospects, save leads and build your sales pipeline
+        in one place.
+      </p>
+    </section>
 
-    <div class="panel">
-      <h2>Find businesses</h2>
-      <p>Choose a market to explore potential clients.</p>
+    <section id="auth-panel" class="panel">
+      <h2>Welcome to Prosqavo</h2>
+      <p class="muted">Entre na sua conta ou crie seu acesso.</p>
 
-      <label for="country">Country</label>
-      <select id="country">
-        <option>United States</option>
-        <option>Brazil</option>
-        <option>United Kingdom</option>
-        <option>Portugal</option>
-        <option>Canada</option>
-      </select>
+      <form id="auth-form">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email"
+          placeholder="voce@email.com" required>
 
-      <label for="type">Business type</label>
-      <select id="type">
-        <option>Barbershops</option>
-        <option>Restaurants</option>
-        <option>Auto repair shops</option>
-        <option>Bakeries</option>
-        <option>Beauty salons</option>
-      </select>
+        <label for="password">Senha</label>
+        <input id="password" type="password" minlength="6"
+          autocomplete="current-password"
+          placeholder="Mínimo de 6 caracteres" required>
 
-      <label for="city">City (optional)</label>
-      <input id="city" placeholder="e.g. Miami">
-
-      <button onclick="searchBusinesses()">Explore opportunities →</button>
-      <div id="results" aria-live="polite"></div>
-    </div>
-
-    <div class="panel">
-      <h2>Your workspace</h2>
-      <div class="stats">
-        <div class="stat">
-          <div class="number" id="count">0</div>
-          <small>Demo results</small>
+        <div class="actions">
+          <button class="primary" id="login-btn" type="submit">Entrar</button>
+          <button class="secondary" id="signup-btn" type="button">Criar conta</button>
         </div>
-        <div class="stat">
-          <div class="number">AI</div>
-          <small>Outreach assistant</small>
-        </div>
+      </form>
+
+      <p id="auth-status" class="status" role="status"></p>
+    </section>
+
+    <section id="app-panel" class="hidden">
+      <div class="panel">
+        <p class="muted">Sua área de trabalho</p>
+        <h2>Explore opportunities</h2>
+        <p id="account-email" class="muted"></p>
+
+        <h3>Adicionar um lead</h3>
+        <p class="muted">
+          Cadastre uma empresa que você encontrou. A busca automática de
+          empresas será integrada em uma próxima etapa.
+        </p>
+
+        <form id="lead-form">
+          <label for="company">Nome da empresa *</label>
+          <input id="company" required maxlength="200"
+            placeholder="Ex.: Empresa ABC">
+
+          <div class="grid">
+            <div>
+              <label for="country">País</label>
+              <input id="country" maxlength="100"
+                placeholder="Brasil">
+            </div>
+            <div>
+              <label for="city">Cidade</label>
+              <input id="city" maxlength="150"
+                placeholder="Rio de Janeiro">
+            </div>
+          </div>
+
+          <label for="business-type">Tipo de negócio</label>
+          <input id="business-type" maxlength="150"
+            placeholder="Ex.: Restaurante">
+
+          <label for="website">Site da empresa</label>
+          <input id="website" type="text" maxlength="500"
+            placeholder="https://empresa.com">
+
+          <div class="actions">
+            <button class="primary" id="save-btn" type="submit">
+              Salvar lead
+            </button>
+            <button class="secondary" id="refresh-btn" type="button">
+              Atualizar lista
+            </button>
+          </div>
+        </form>
+
+        <p id="lead-status" class="status" role="status"></p>
       </div>
-      <p>Real business data and AI integrations will be connected in the next stages.</p>
-    </div>
+
+      <div class="panel">
+        <h2>Meus leads</h2>
+        <p class="muted">Empresas salvas na sua conta.</p>
+        <div id="lead-list"></div>
+      </div>
+
+      <button id="logout-btn" class="secondary" type="button">
+        Sair da conta
+      </button>
+    </section>
   </main>
 
-  <footer>Prosqavo © 2026 · Built for smarter sales</footer>
+  <footer>Prosqavo · B2B Prospecting</footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    function searchBusinesses() {
-      const country = document.getElementById('country').value;
-      const type = document.getElementById('type').value;
-      const city = document.getElementById('city').value.trim();
-      const results = document.getElementById('results');
+  (function () {
+    const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
 
-      document.getElementById('count').textContent = '3';
+    const $ = id => document.getElementById(id);
+    const authPanel = $("auth-panel");
+    const appPanel = $("app-panel");
+    const authStatus = $("auth-status");
+    const leadStatus = $("lead-status");
 
-      const examples = [
-        ['Sample Business One', 'Website opportunity to investigate'],
-        ['Sample Business Two', 'Check online presence before outreach'],
-        ['Sample Business Three', 'Potential prospect — needs verification']
-      ];
+    if (!window.supabase) {
+      authStatus.textContent =
+        "Não foi possível carregar o Supabase. Verifique a conexão.";
+      return;
+    }
 
-      results.innerHTML = '<p>Demo results · ' +
-        country + (city ? ' · ' + city : '') + '</p>';
+    if (SUPABASE_KEY === "COLE_SUA_CHAVE_PUBLICA_AQUI") {
+      authStatus.textContent =
+        "Falta configurar a chave pública do Supabase no código.";
+      return;
+    }
 
-      examples.forEach(function(item) {
-        const card = document.createElement('div');
-        card.className = 'business';
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
-        const title = document.createElement('strong');
-        title.textContent = item[0];
+    function showStatus(element, text, error) {
+      element.textContent = text;
+      element.style.color = error ? "#ff9292" : "#42e58a";
+    }
 
-        const detail = document.createElement('p');
-        detail.textContent = type + ' · ' + item[1];
+    function setBusy(busy) {
+      $("login-btn").disabled = busy;
+      $("signup-btn").disabled = busy;
+    }
 
+    async function loadLeads() {
+      const { data, error } = await db
+        .from("leads")
+        .select("id, company_name, country, city, business_type, website")
+        .order("id", { ascending: false })
+        .limit(100);
+
+      if (error) {
+        showStatus(
+          leadStatus,
+          "Erro ao carregar leads: " + error.message,
+          true
+        );
+        return;
+      }
+
+      const list = $("lead-list");
+      list.replaceChildren();
+
+      if (!data || data.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = "Nenhum lead salvo ainda.";
+        list.appendChild(empty);
+        return;
+      }
+
+      data.forEach(function (lead) {
+        const card = document.createElement("article");
+        card.className = "lead";
+
+        const title = document.createElement("strong");
+        title.textContent = lead.company_name || "Empresa sem nome";
         card.appendChild(title);
-        card.appendChild(detail);
-        results.appendChild(card);
+
+        const details = [
+          lead.business_type,
+          [lead.city, lead.country].filter(Boolean).join(", ")
+        ].filter(Boolean).join(" · ");
+
+        if (details) {
+          const p = document.createElement("p");
+          p.textContent = details;
+          card.appendChild(p);
+        }
+
+        if (lead.website) {
+          const p = document.createElement("p");
+          p.textContent = "Site: " + lead.website;
+          card.appendChild(p);
+        }
+
+        list.appendChild(card);
       });
 
-      const note = document.createElement('p');
-      note.textContent =
-        'These are fictional examples, not real businesses. Live search comes next.';
-      results.appendChild(note);
+      showStatus(leadStatus, data.length + " lead(s) carregado(s).", false);
     }
+
+    async function updateSession() {
+      const { data, error } = await db.auth.getSession();
+
+      if (error) {
+        showStatus(authStatus, "Erro de sessão: " + error.message, true);
+        return;
+      }
+
+      const user = data.session && data.session.user;
+
+      authPanel.classList.toggle("hidden", Boolean(user));
+      appPanel.classList.toggle("hidden", !user);
+
+      if (user) {
+        $("account-email").textContent = "Conectado: " + user.email;
+        await loadLeads();
+      }
+    }
+
+    $("auth-form").addEventListener("submit", async function (event) {
+      event.preventDefault();
+      setBusy(true);
+      showStatus(authStatus, "Verificando login...", false);
+
+      try {
+        const { error } = await db.auth.signInWithPassword({
+          email: $("email").value.trim(),
+          password: $("password").value
+        });
+
+        if (error) {
+          showStatus(authStatus, "Erro no login: " + error.message, true);
+        } else {
+          showStatus(authStatus, "Login realizado!", false);
+          await updateSession();
+        }
+      } catch (error) {
+        showStatus(authStatus, "Erro de conexão: " + error.message, true);
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    $("signup-btn").addEventListener("click", async function () {
+      const email = $("email").value.trim();
+      const password = $("password").value;
+
+      if (!email || password.length < 6) {
+        showStatus(
+          authStatus,
+          "Informe um e-mail válido e senha de pelo menos 6 caracteres.",
+          true
+        );
+        return;
+      }
+
+      setBusy(true);
+      showStatus(authStatus, "Criando sua conta...", false);
+
+      try {
+        const { data, error } = await db.auth.signUp({
+          email: email,
+          password: password
+        });
+
+        if (error) {
+          showStatus(authStatus, "Erro no cadastro: " + error.message, true);
+        } else if (data.session) {
+          showStatus(authStatus, "Conta criada!", false);
+          await updateSession();
+        } else {
+          showStatus(
+            authStatus,
+            "Cadastro iniciado. Confirme seu e-mail e depois entre.",
+            false
+          );
+        }
+      } catch (error) {
+        showStatus(authStatus, "Erro de conexão: " + error.message, true);
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    $("lead-form").addEventListener("submit", async function (event) {
+      event.preventDefault();
+      $("save-btn").disabled = true;
+      showStatus(leadStatus, "Salvando lead...", false);
+
+      try {
+        const { data: sessionData, error: sessionError } =
+          await db.auth.getSession();
+
+        if (sessionError || !sessionData.session) {
+          showStatus(leadStatus, "Sua sessão expirou. Entre novamente.", true);
+          return;
+        }
+
+        const website = $("website").value.trim();
+
+        const lead = {
+          user_id: sessionData.session.user.id,
+          company_name: $("company").value.trim(),
+          country: $("country").value.trim() || null,
+          city: $("city").value.trim() || null,
+          business_type: $("business-type").value.trim() || null,
+          website: website || null
+        };
+
+        const { error } = await db.from("leads").insert(lead);
+
+        if (error) {
+          showStatus(
+            leadStatus,
+            "Erro ao salvar: " + error.message,
+            true
+          );
+          return;
+        }
+
+        $("lead-form").reset();
+        showStatus(leadStatus, "Lead salvo com sucesso!", false);
+        await loadLeads();
+      } catch (error) {
+        showStatus(leadStatus, "Erro: " + error.message, true);
+      } finally {
+        $("save-btn").disabled = false;
+      }
+    });
+
+    $("refresh-btn").addEventListener("click", loadLeads);
+
+    $("logout-btn").addEventListener("click", async function () {
+      const { error } = await db.auth.signOut();
+
+      if (error) {
+        showStatus(leadStatus, "Erro ao sair: " + error.message, true);
+        return;
+      }
+
+      showStatus(authStatus, "Você saiu da conta.", false);
+      await updateSession();
+    });
+
+    db.auth.onAuthStateChange(function () {
+      setTimeout(updateSession, 0);
+    });
+
+    updateSession();
+  })();
   </script>
-
-<!-- PROSQAVO - LOGIN SUPABASE -->
-<section id="prosqavo-auth" style="max-width:440px;margin:30px auto;padding:24px;background:#111916;color:white;border:1px solid #294638;border-radius:16px;font-family:Arial,sans-serif;">
-  <h2>Acesse o Prosqavo</h2>
-  <p>Entre na sua conta ou crie uma gratuitamente.</p>
-
-  <form id="prosqavo-auth-form">
-    <label for="prosqavo-email">E-mail</label>
-    <input id="prosqavo-email" type="email" required autocomplete="email" placeholder="seu@email.com" style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
-
-    <label for="prosqavo-password">Senha</label>
-    <input id="prosqavo-password" type="password" minlength="6" required autocomplete="current-password" placeholder="Mínimo de 6 caracteres" style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
-
-    <button type="submit" id="prosqavo-login-btn">Entrar</button>
-    <button type="button" id="prosqavo-signup-btn">Criar conta</button>
-  </form>
-
-  <button type="button" id="prosqavo-logout-btn" hidden>Sair da conta</button>
-  <p id="prosqavo-auth-message" role="status"></p>
-  <p id="prosqavo-user"></p>
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(function () {
-  const SUPABASE_URL = "COLE_SUA_PROJECT_URL_AQUI";
-  const SUPABASE_KEY = "COLE_SUA_CHAVE_PUBLICA_AQUI";
-
-  const message = document.getElementById("prosqavo-auth-message");
-  const userText = document.getElementById("prosqavo-user");
-  const form = document.getElementById("prosqavo-auth-form");
-  const loginButton = document.getElementById("prosqavo-login-btn");
-  const signupButton = document.getElementById("prosqavo-signup-btn");
-  const logoutButton = document.getElementById("prosqavo-logout-btn");
-
-  if (!window.supabase) {
-    message.textContent = "Falha ao carregar o Supabase. Verifique sua conexão.";
-    return;
-  }
-
-  if (SUPABASE_URL.includes("https://epbujrjcllihqvoytiev.supabase.co/rest/v1/") ||
-      SUPABASE_KEY.includes("sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1")) {
-    message.textContent = "Configure a URL e a chave pública do Supabase.";
-    return;
-  }
-
-  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  function showMessage(text, error) {
-    message.textContent = text;
-    message.style.color = error ? "#ff8b8b" : "#75e6a0";
-  }
-
-  async function refreshSession() {
-    const { data, error } = await client.auth.getSession();
-
-    if (error) {
-      showMessage("Não foi possível verificar a sessão.", true);
-      return;
-    }
-
-    const user = data.session && data.session.user;
-
-    userText.textContent = user ? "Conectado: " + user.email : "";
-    logoutButton.hidden = !user;
-  }
-
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    loginButton.disabled = true;
-    signupButton.disabled = true;
-    showMessage("Entrando...", false);
-
-    const { error } = await client.auth.signInWithPassword({
-      email: document.getElementById("prosqavo-email").value.trim(),
-      password: document.getElementById("prosqavo-password").value
-    });
-
-    loginButton.disabled = false;
-    signupButton.disabled = false;
-
-    if (error) {
-      showMessage("Falha no login. Confira o e-mail, a senha e a confirmação do cadastro.", true);
-      return;
-    }
-
-    showMessage("Login realizado com sucesso!", false);
-    await refreshSession();
-  });
-
-  signupButton.addEventListener("click", async function () {
-    const email = document.getElementById("prosqavo-email").value.trim();
-    const password = document.getElementById("prosqavo-password").value;
-
-    if (!email || password.length < 6) {
-      showMessage("Informe um e-mail válido e uma senha com pelo menos 6 caracteres.", true);
-      return;
-    }
-
-    loginButton.disabled = true;
-    signupButton.disabled = true;
-    showMessage("Criando conta...", false);
-
-    const { data, error } = await client.auth.signUp({
-      email: email,
-      password: password
-    });
-
-    loginButton.disabled = false;
-    signupButton.disabled = false;
-
-    if (error) {
-      showMessage("Não foi possível criar a conta. Confira os dados.", true);
-      return;
-    }
-
-    if (data.session) {
-      showMessage("Conta criada e login realizado!", false);
-      await refreshSession();
-    } else {
-      showMessage("Cadastro iniciado! Confira seu e-mail para confirmar a conta.", false);
-    }
-  });
-
-  logoutButton.addEventListener("click", async function () {
-    const { error } = await client.auth.signOut();
-
-    if (error) {
-      showMessage("Não foi possível sair. Tente novamente.", true);
-      return;
-    }
-
-    showMessage("Você saiu da conta.", false);
-    await refreshSession();
-  });
-
-  refreshSession();
-})();
-</script>
-
-<!-- PROSQAVO LOGIN -->
-<section id="prosqavo-auth" style="max-width:440px;margin:30px auto;padding:24px;background:#111916;color:white;border:1px solid #294638;border-radius:16px;font-family:Arial,sans-serif;">
-  <h2>Acesse o Prosqavo</h2>
-  <p>Entre na sua conta ou crie uma gratuitamente.</p>
-
-  <form id="prosqavo-auth-form">
-    <label for="prosqavo-email">E-mail</label>
-    <input id="prosqavo-email" type="email" required autocomplete="email" style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
-
-    <label for="prosqavo-password">Senha</label>
-    <input id="prosqavo-password" type="password" minlength="6" required autocomplete="current-password" style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
-
-    <button id="prosqavo-login-btn" type="submit">Entrar</button>
-    <button id="prosqavo-signup-btn" type="button">Criar conta</button>
-  </form>
-
-  <button id="prosqavo-logout-btn" type="button" hidden>Sair</button>
-  <p id="prosqavo-auth-message" role="status"></p>
-  <p id="prosqavo-user"></p>
-</section>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(function () {
-  const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
-
-  const $ = id => document.getElementById(id);
-  const message = $("prosqavo-auth-message");
-  const form = $("prosqavo-auth-form");
-  const login = $("prosqavo-login-btn");
-  const signup = $("prosqavo-signup-btn");
-  const logout = $("prosqavo-logout-btn");
-
-  function say(text) {
-    message.textContent = text;
-  }
-
-  if (!window.supabase) {
-    say("Erro: a biblioteca Supabase não carregou. Atualize a página e tente novamente.");
-    return;
-  }
-
-  if (SUPABASE_KEY === "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1") {
-    say("Erro: falta inserir sua chave pública do Supabase no código.");
-    return;
-  }
-
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  async function refresh() {
-    const { data, error } = await db.auth.getSession();
-    if (error) {
-      say("Erro ao verificar sessão: " + error.message);
-      return;
-    }
-
-    const user = data.session?.user;
-    $("prosqavo-user").textContent = user ? "Conectado: " + user.email : "";
-    logout.hidden = !user;
-  }
-
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
-    login.disabled = true;
-    say("Tentando entrar...");
-
-    try {
-      const { error } = await db.auth.signInWithPassword({
-        email: $("prosqavo-email").value.trim(),
-        password: $("prosqavo-password").value
-      });
-
-      if (error) {
-        say("Erro no login: " + error.message);
-      } else {
-        say("Login realizado!");
-        await refresh();
-      }
-    } catch (error) {
-      say("Erro de conexão: " + error.message);
-    } finally {
-      login.disabled = false;
-    }
-  });
-
-  signup.addEventListener("click", async function () {
-    const email = $("prosqavo-email").value.trim();
-    const password = $("prosqavo-password").value;
-
-    if (!email || password.length < 6) {
-      say("Informe um e-mail válido e uma senha com pelo menos 6 caracteres.");
-      return;
-    }
-
-    signup.disabled = true;
-    say("Criando conta...");
-
-    try {
-      const { data, error } = await db.auth.signUp({ email, password });
-
-      if (error) {
-        say("Erro no cadastro: " + error.message);
-      } else if (data.session) {
-        say("Conta criada e login realizado!");
-        await refresh();
-      } else {
-        say("Cadastro iniciado. Confira seu e-mail para confirmar a conta.");
-      }
-    } catch (error) {
-      say("Erro de conexão: " + error.message);
-    } finally {
-      signup.disabled = false;
-    }
-  });
-
-  logout.addEventListener("click", async function () {
-    const { error } = await db.auth.signOut();
-    say(error ? "Erro ao sair: " + error.message : "Você saiu da conta.");
-    await refresh();
-  });
-
-  refresh();
-})();
-</script>
-<!-- FIM PROSQAVO LOGIN -->
 </body>
 </html>
