@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prosqavo — AI Prospecting</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #0b0e0c; color: #f4f7f4;
+      font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    }
+    header {
+      padding: 22px; border-bottom: 1px solid #242a25;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo { font-size: 23px; font-weight: 800; }
+    .logo span { color: #b9f56b; }
+    .tag { color: #b9f56b; font-size: 11px; }
+    main { max-width: 850px; margin: auto; padding: 25px 18px; }
+    h1 { font-size: 34px; margin-bottom: 8px; }
+    p { color: #a6afa7; line-height: 1.5; }
+    .accent { color: #b9f56b; }
+    .panel {
+      background: #141915; border: 1px solid #29312a;
+      border-radius: 16px; padding: 19px; margin-top: 20px;
+    }
+    label { display: block; margin: 15px 0 8px; font-size: 13px; }
+    input, select, button {
+      width: 100%; padding: 14px; border-radius: 10px;
+      font-size: 15px;
+    }
+    input, select {
+      background: #0b0e0c; border: 1px solid #394239;
+      color: white;
+    }
+    button {
+      margin-top: 15px; background: #b9f56b; color: #10150c;
+      border: 0; font-weight: 800; cursor: pointer;
+    }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat { background: #1b211c; padding: 16px; border-radius: 12px; }
+    .number { font-size: 26px; font-weight: bold; }
+    #results { margin-top: 16px; }
+    .business {
+      padding: 14px 0; border-bottom: 1px solid #303630;
+    }
+    .business strong { display: block; margin-bottom: 5px; }
+    small { color: #b9f56b; }
+    footer { text-align: center; padding: 25px; color: #687169; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Prosqavo<span>.</span></div>
+    <div class="tag">AI PROSPECTING</div>
+  </header>
+
+  <main>
+    <p class="accent">YOUR SALES WORKSPACE</p>
+    <h1>Find your next <span class="accent">client.</span></h1>
+    <p>Discover business opportunities and prepare smarter outreach with AI.</p>
+
+    <div class="panel">
+      <h2>Find businesses</h2>
+      <p>Choose a market to explore potential clients.</p>
+
+      <label for="country">Country</label>
+      <select id="country">
+        <option>United States</option>
+        <option>Brazil</option>
+        <option>United Kingdom</option>
+        <option>Portugal</option>
+        <option>Canada</option>
+      </select>
+
+      <label for="type">Business type</label>
+      <select id="type">
+        <option>Barbershops</option>
+        <option>Restaurants</option>
+        <option>Auto repair shops</option>
+        <option>Bakeries</option>
+        <option>Beauty salons</option>
+      </select>
+
+      <label for="city">City (optional)</label>
+      <input id="city" placeholder="e.g. Miami">
+
+      <button onclick="searchBusinesses()">Explore opportunities →</button>
+      <div id="results" aria-live="polite"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Your workspace</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="number" id="count">0</div>
+          <small>Demo results</small>
+        </div>
+        <div class="stat">
+          <div class="number">AI</div>
+          <small>Outreach assistant</small>
+        </div>
+      </div>
+      <p>Real business data and AI integrations will be connected in the next stages.</p>
+    </div>
+  </main>
+
+  <footer>Prosqavo © 2026 · Built for smarter sales</footer>
+
+  <script>
+    function searchBusinesses() {
+      const country = document.getElementById('country').value;
+      const type = document.getElementById('type').value;
+      const city = document.getElementById('city').value.trim();
+      const results = document.getElementById('results');
+
+      document.getElementById('count').textContent = '3';
+
+      const examples = [
+        ['Sample Business One', 'Website opportunity to investigate'],
+        ['Sample Business Two', 'Check online presence before outreach'],
+        ['Sample Business Three', 'Potential prospect — needs verification']
+      ];
+
+      results.innerHTML = '<p>Demo results · ' +
+        country + (city ? ' · ' + city : '') + '</p>';
+
+      examples.forEach(function(item) {
+        const card = document.createElement('div');
+        card.className = 'business';
+
+        const title = document.createElement('strong');
+        title.textContent = item[0];
+
+        const detail = document.createElement('p');
+        detail.textContent = type + ' · ' + item[1];
+
+        card.appendChild(title);
+        card.appendChild(detail);
+        results.appendChild(card);
+      });
+
+      const note = document.createElement('p');
+      note.textContent =
+        'These are fictional examples, not real businesses. Live search comes next.';
+      results.appendChild(note);
+    }
+  </script>
+</body>
+</html>
