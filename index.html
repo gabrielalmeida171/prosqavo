@@ -3,47 +3,40 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07110d">
-<meta name="description" content="Prosqavo — encontre empresas e organize seus leads.">
+<meta name="description" content="Prosqavo: encontre empresas e organize seus leads comerciais.">
 <title>Prosqavo — Prospecção B2B</title>
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <style>
-:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b14;--border:#203b2b;--green:#35d879;--muted:#9bb2a3}
+:root{color-scheme:dark;--bg:#07110d;--panel:#0d1b14;--border:#254331;--green:#35d879;--muted:#a0b7a7}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:#f2fff6;font-family:Arial,sans-serif}
-button,input,select{font:inherit}
-header{padding:18px 5%;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.logo{font-size:25px;font-weight:800;color:var(--green)}
-.logo span{color:white}
-main{max-width:1100px;margin:auto;padding:22px 16px}
-h1{font-size:26px;margin:12px 0}
-p,.muted{color:var(--muted);line-height:1.5}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px;margin:16px 0}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-label{display:block;font-size:13px;color:#b8cbbd;margin-bottom:7px}
-input,select{width:100%;background:#07130c;border:1px solid #31523b;border-radius:9px;padding:13px;color:white;outline:none}
-input:focus,select:focus{border-color:var(--green)}
-button,.btn{border:0;border-radius:9px;padding:12px 15px;background:var(--green);color:#06130a;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
-button.secondary,.btn.secondary{background:#173122;color:#e9fff0;border:1px solid #31523b}
-button:disabled{opacity:.5;cursor:wait}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-#status{white-space:pre-wrap;margin:12px 0;color:#bce8c9}
+header{padding:17px 5%;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font-size:25px;font-weight:800;color:var(--green)}.logo span{color:#fff}
+main{max-width:1120px;margin:auto;padding:22px 16px}
+h1{font-size:27px;margin:8px 0 10px}h2{font-size:20px}
+p{color:var(--muted);line-height:1.5}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:18px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+label{display:block;font-size:13px;color:#bdd0c2;margin-bottom:7px}
+input,select{width:100%;padding:13px;background:#07130c;color:#fff;border:1px solid #31523b;border-radius:9px;font-size:15px}
+button,.btn{display:inline-block;padding:12px 15px;border:0;border-radius:9px;background:var(--green);color:#06130a;font-weight:bold;text-decoration:none;text-align:center;cursor:pointer}
+.secondary{background:#173122!important;color:#eaffef!important;border:1px solid #31523b!important}
+button:disabled{opacity:.55;cursor:wait}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+#status,#authStatus{white-space:pre-wrap;color:#bce8c9;margin-top:12px}
 #results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.company{background:#0b1710;border:1px solid var(--border);padding:15px;border-radius:13px;min-width:0}
-.company h3{margin:0 0 8px;font-size:17px;overflow-wrap:anywhere}
-.company p{font-size:13px;margin:6px 0;overflow-wrap:anywhere}
-.company .actions{margin-top:12px}
-.company .btn{font-size:13px;padding:10px}
-#map{height:330px;border-radius:12px;border:1px solid var(--border);z-index:1}
-.hidden{display:none!important}
-.small{font-size:12px}
-hr{border:0;border-top:1px solid var(--border);margin:18px 0}
-@media(max-width:650px){.grid,#results{grid-template-columns:1fr}main{padding:14px 12px}header{padding:15px 4%}h1{font-size:23px}.panel{padding:14px}#map{height:280px}}
+.company{background:#09150e;border:1px solid var(--border);border-radius:12px;padding:15px;min-width:0}
+.company h3{font-size:17px;margin:0 0 10px;overflow-wrap:anywhere}
+.company p{font-size:13px;margin:7px 0;overflow-wrap:anywhere}
+.company .btn,.company button{font-size:12px;padding:10px}
+#map{height:330px;border-radius:12px;border:1px solid var(--border)}
+.hidden{display:none!important}.small{font-size:12px}
+.optional{font-size:12px;color:var(--green);margin-top:6px}
+@media(max-width:650px){main{padding:13px 11px}.panel{padding:14px}.grid,#results{grid-template-columns:1fr}#map{height:270px}h1{font-size:23px}}
 </style>
 </head>
 <body>
@@ -51,31 +44,24 @@ hr{border:0;border-top:1px solid var(--border);margin:18px 0}
   <div class="logo">Prosq<span>avo</span></div>
   <div id="headerActions"></div>
 </header>
-
 <main>
   <section id="authPanel" class="panel">
-    <h1>Entre na sua conta</h1>
-    <p>Acesse seus leads e faça prospecção de empresas.</p>
+    <h1>Acesse o Prosqavo</h1>
+    <p>Entre na sua conta para pesquisar empresas e salvar seus leads.</p>
     <div class="grid">
-      <div>
-        <label for="email">E-mail</label>
-        <input id="email" type="email" autocomplete="email" placeholder="seu@email.com">
-      </div>
-      <div>
-        <label for="password">Senha</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="Sua senha">
-      </div>
+      <div><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" placeholder="seu@email.com"></div>
+      <div><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" placeholder="Sua senha"></div>
     </div>
     <div class="actions">
       <button id="loginBtn" onclick="authenticate('login')">Entrar</button>
-      <button class="secondary" id="signupBtn" onclick="authenticate('signup')">Criar conta</button>
+      <button id="signupBtn" class="secondary" onclick="authenticate('signup')">Criar conta</button>
     </div>
-    <div id="authStatus" class="muted"></div>
+    <div id="authStatus"></div>
   </section>
 
   <section id="appPanel" class="hidden">
-    <h1>Encontre novos clientes</h1>
-    <p>Pesquise empresas por segmento e cidade. Os resultados dependem dos dados disponíveis nas fontes gratuitas.</p>
+    <h1>Encontre empresas para prospectar</h1>
+    <p>Escolha um segmento e um estado. A cidade é opcional.</p>
 
     <div class="panel">
       <div class="grid">
@@ -89,7 +75,7 @@ hr{border:0;border-top:1px solid var(--border);margin:18px 0}
             <option value="oficinas">Oficinas mecânicas</option>
             <option value="dentistas">Dentistas e clínicas odontológicas</option>
             <option value="academias">Academias</option>
-            <option value="mercados">Mercados</option>
+            <option value="mercados">Mercados e mercearias</option>
             <option value="imobiliarias">Imobiliárias</option>
             <option value="hoteis">Hotéis e pousadas</option>
             <option value="farmacias">Farmácias</option>
@@ -97,15 +83,16 @@ hr{border:0;border-top:1px solid var(--border);margin:18px 0}
           </select>
         </div>
         <div>
-          <label for="state">Estado</label>
+          <label for="state">Estado (obrigatório)</label>
           <select id="state"><option value="">Carregando estados...</option></select>
         </div>
         <div>
-          <label for="city">Cidade</label>
-          <select id="city" disabled><option value="">Escolha um estado primeiro</option></select>
+          <label for="city">Cidade (opcional)</label>
+          <select id="city" disabled><option value="">Todas as cidades do estado</option></select>
+          <div class="optional">Deixe como “Todas as cidades do estado” para pesquisar no estado inteiro.</div>
         </div>
         <div>
-          <label for="limit">Limite de resultados</label>
+          <label for="limit">Máximo de resultados exibidos</label>
           <select id="limit">
             <option value="10">10 empresas</option>
             <option value="20">20 empresas</option>
@@ -117,7 +104,7 @@ hr{border:0;border-top:1px solid var(--border);margin:18px 0}
         <button class="secondary" onclick="loadLeads()">Meus leads salvos</button>
       </div>
       <div id="status" role="status"></div>
-      <p class="small">Fonte de empresas: OpenStreetMap. A pesquisa é gratuita, mas depende da disponibilidade dos servidores e dos dados cadastrados.</p>
+      <p class="small">A busca usa dados públicos do OpenStreetMap. O número de empresas e de contatos depende dos dados cadastrados e da disponibilidade dos servidores.</p>
     </div>
 
     <div class="panel">
@@ -126,524 +113,362 @@ hr{border:0;border-top:1px solid var(--border);margin:18px 0}
     </div>
 
     <div class="panel">
-      <h2 id="resultsTitle">Resultados da pesquisa</h2>
-      <div id="results"><p class="muted">Escolha o segmento, o estado e a cidade para começar.</p></div>
+      <h2 id="resultsTitle">Resultados</h2>
+      <div id="results"><p>Escolha um segmento e estado para começar.</p></div>
     </div>
   </section>
 </main>
 
 <script>
-/* Configuração do projeto Supabase */
 const SUPABASE_URL = "https://epbujrjcllihqvoytiev.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Qbary59ESMDbrNsuXI7Xaw_LzjOkRt1";
-
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const tags = {
-  barbearias: [['shop','hairdresser']],
-  saloes: [['shop','beauty']],
-  restaurantes: [['amenity','restaurant']],
-  lanchonetes: [['amenity','fast_food'],['amenity','cafe']],
-  oficinas: [['shop','car_repair']],
-  dentistas: [['amenity','dentist']],
-  academias: [['leisure','fitness_centre']],
-  mercados: [['shop','supermarket'],['shop','convenience']],
-  imobiliarias: [['office','estate_agent']],
-  hoteis: [['tourism','hotel'],['tourism','guest_house']],
-  farmacias: [['amenity','pharmacy']],
-  petshops: [['shop','pet']]
+  barbearias:[['shop','hairdresser']],
+  saloes:[['shop','beauty']],
+  restaurantes:[['amenity','restaurant']],
+  lanchonetes:[['amenity','fast_food'],['amenity','cafe']],
+  oficinas:[['shop','car_repair']],
+  dentistas:[['amenity','dentist']],
+  academias:[['leisure','fitness_centre']],
+  mercados:[['shop','supermarket'],['shop','convenience']],
+  imobiliarias:[['office','estate_agent']],
+  hoteis:[['tourism','hotel'],['tourism','guest_house']],
+  farmacias:[['amenity','pharmacy']],
+  petshops:[['shop','pet']]
 };
 
+const $ = id => document.getElementById(id);
 let currentUser = null;
 let currentResults = [];
 let map = null;
 let markers = [];
-let lastSearchKey = '';
-let searchInProgress = false;
+let searching = false;
+let searchSequence = 0;
 
-const $ = id => document.getElementById(id);
-
-function setStatus(message) {
-  $('status').textContent = message || '';
+function setStatus(s){$('status').textContent=s||''}
+function escapeHTML(s){
+  return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function escapeHTML(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({
-    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-  }[c]));
-}
-
-function normalizePhone(phone) {
-  let n = String(phone || '').replace(/\D/g, '');
-  if (!n) return '';
-  if (n.startsWith('00')) n = n.slice(2);
-  if (n.length === 10 || n.length === 11) n = '55' + n;
-  return n;
-}
-
-function whatsappURL(phone) {
-  const n = normalizePhone(phone);
-  return n ? 'https://wa.me/' + n : '';
-}
-
-function phoneURL(phone) {
-  const n = String(phone || '').replace(/[^\d+]/g, '');
-  return n ? 'tel:' + n : '';
-}
-
-async function authenticate(mode) {
-  const email = $('email').value.trim();
-  const password = $('password').value;
-  $('authStatus').textContent = '';
-
-  if (!email || !password) {
-    $('authStatus').textContent = 'Informe seu e-mail e sua senha.';
-    return;
-  }
-
-  $('loginBtn').disabled = $('signupBtn').disabled = true;
-  try {
-    let result;
-    if (mode === 'signup') {
-      result = await db.auth.signUp({email, password});
-      if (!result.error && !result.data.session) {
-        $('authStatus').textContent =
-          'Cadastro enviado. Se a confirmação por e-mail estiver ativa, confirme seu endereço e depois entre.';
-      }
-    } else {
-      result = await db.auth.signInWithPassword({email, password});
+async function authenticate(mode){
+  const email=$('email').value.trim(),password=$('password').value;
+  $('authStatus').textContent='';
+  if(!email||!password){$('authStatus').textContent='Informe seu e-mail e senha.';return}
+  $('loginBtn').disabled=$('signupBtn').disabled=true;
+  try{
+    const result=mode==='signup'
+      ?await db.auth.signUp({email,password})
+      :await db.auth.signInWithPassword({email,password});
+    if(result.error)throw result.error;
+    if(mode==='signup'&&!result.data.session){
+      $('authStatus').textContent='Cadastro enviado. Verifique seu e-mail se a confirmação estiver ativada.';
     }
-
-    if (result.error) throw result.error;
-    if (result.data.session) await updateSession(result.data.session);
-  } catch (e) {
-    $('authStatus').textContent = 'Não foi possível autenticar: ' + e.message;
-  } finally {
-    $('loginBtn').disabled = $('signupBtn').disabled = false;
-  }
+    if(result.data.session)await updateSession(result.data.session);
+  }catch(e){$('authStatus').textContent='Erro de acesso: '+e.message}
+  finally{$('loginBtn').disabled=$('signupBtn').disabled=false}
 }
 
-async function updateSession(session) {
-  currentUser = session?.user || null;
-  $('authPanel').classList.toggle('hidden', !!currentUser);
-  $('appPanel').classList.toggle('hidden', !currentUser);
-  $('headerActions').innerHTML = currentUser
-    ? '<button class="secondary" onclick="logout()">Sair</button>' : '';
-  if (currentUser) {
-    initMap();
-    await loadStates();
-  }
+async function updateSession(session){
+  currentUser=session?.user||null;
+  $('authPanel').classList.toggle('hidden',!!currentUser);
+  $('appPanel').classList.toggle('hidden',!currentUser);
+  $('headerActions').innerHTML=currentUser?'<button class="secondary" onclick="logout()">Sair</button>':'';
+  if(currentUser){initMap();if(!$('state').options.length||$('state').options.length<2)await loadStates()}
 }
 
-async function logout() {
-  const {error} = await db.auth.signOut();
-  if (error) {
-    alert('Erro ao sair: ' + error.message);
-    return;
-  }
-  currentUser = null;
+async function logout(){
+  const {error}=await db.auth.signOut();
+  if(error){alert('Erro ao sair: '+error.message);return}
+  currentUser=null;
   $('appPanel').classList.add('hidden');
   $('authPanel').classList.remove('hidden');
-  $('headerActions').innerHTML = '';
+  $('headerActions').innerHTML='';
 }
 
-function initMap() {
-  if (map) {
-    setTimeout(() => map.invalidateSize(), 100);
-    return;
-  }
-  map = L.map('map').setView([-22.5, -42.0], 9);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
+function initMap(){
+  if(map){setTimeout(()=>map.invalidateSize(),150);return}
+  map=L.map('map').setView([-14.2,-51.9],4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19,attribution:'&copy; OpenStreetMap contributors'
   }).addTo(map);
 }
 
-async function loadStates() {
-  const select = $('state');
-  select.innerHTML = '<option value="">Carregando estados...</option>';
-  try {
-    const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
-    if (!response.ok) throw new Error('Falha ao carregar estados');
-    const states = await response.json();
-    select.innerHTML = '<option value="">Selecione o estado</option>' +
-      states.map(s => `<option value="${escapeHTML(s.sigla)}">${escapeHTML(s.nome)}</option>`).join('');
-  } catch (e) {
-    select.innerHTML = '<option value="">Não foi possível carregar</option>';
-    setStatus('Não consegui carregar os estados. Confira a conexão e tente novamente.');
+async function loadStates(){
+  const sel=$('state');
+  sel.innerHTML='<option value="">Selecione o estado</option>';
+  try{
+    const r=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome');
+    if(!r.ok)throw Error('IBGE indisponível');
+    const states=await r.json();
+    sel.innerHTML='<option value="">Selecione o estado</option>'+
+      states.map(s=>`<option value="${escapeHTML(s.sigla)}">${escapeHTML(s.nome)}</option>`).join('');
+  }catch(e){
+    sel.innerHTML='<option value="">Falha ao carregar estados</option>';
+    setStatus('Não foi possível carregar os estados. Confira sua conexão e recarregue a página.');
   }
 }
 
-$('state').addEventListener('change', loadCities);
+$('state').addEventListener('change',loadCities);
 
-async function loadCities() {
-  const uf = $('state').value;
-  const select = $('city');
-  select.disabled = true;
-  select.innerHTML = '<option value="">Carregando cidades...</option>';
-  if (!uf) {
-    select.innerHTML = '<option value="">Escolha um estado primeiro</option>';
-    return;
-  }
-  try {
-    const response = await fetch(
-      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${encodeURIComponent(uf)}/municipios?orderBy=nome`
-    );
-    if (!response.ok) throw new Error('Falha ao carregar cidades');
-    const cities = await response.json();
-    select.innerHTML = '<option value="">Selecione a cidade</option>' +
-      cities.map(c => `<option value="${escapeHTML(c.nome)}">${escapeHTML(c.nome)}</option>`).join('');
-    select.disabled = false;
-  } catch (e) {
-    select.innerHTML = '<option value="">Erro ao carregar cidades</option>';
-    setStatus('Não consegui carregar as cidades. Tente novamente.');
+async function loadCities(){
+  const uf=$('state').value,sel=$('city');
+  sel.disabled=true;
+  sel.innerHTML='<option value="">Todas as cidades do estado</option>';
+  if(!uf)return;
+  try{
+    const r=await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${encodeURIComponent(uf)}/municipios?orderBy=nome`);
+    if(!r.ok)throw Error('IBGE indisponível');
+    const cities=await r.json();
+    sel.innerHTML='<option value="">Todas as cidades do estado</option>'+
+      cities.map(c=>`<option value="${escapeHTML(c.nome)}">${escapeHTML(c.nome)}</option>`).join('');
+    sel.disabled=false;
+  }catch(e){
+    sel.innerHTML='<option value="">Todas as cidades do estado</option>';
+    sel.disabled=false;
+    setStatus('Não consegui carregar a lista de cidades. Você ainda pode pesquisar pelo estado.');
   }
 }
 
-async function geocodeCity(city, uf) {
-  const queries = [
-    `${city}, ${uf}, Brasil`,
-    `${city}, Estado do ${uf}, Brasil`
-  ];
-
-  for (const q of queries) {
-    try {
-      const url = 'https://nominatim.openstreetmap.org/search?' +
-        new URLSearchParams({q, format:'jsonv2', countrycodes:'br', limit:'5', addressdetails:'1'});
-      const response = await fetch(url, {headers:{'Accept':'application/json'}});
-      if (!response.ok) continue;
-      const data = await response.json();
-      const match = data.find(item => {
-        const a = item.address || {};
-        const name = (a.city || a.town || a.village || a.municipality || a.county || '').toLowerCase();
-        const target = city.toLowerCase();
-        return name === target || (item.display_name || '').toLowerCase().startsWith(target + ',');
-      }) || data[0];
-
-      if (match) {
-        return {lat:Number(match.lat), lon:Number(match.lon), label:match.display_name};
-      }
-    } catch (e) {}
-  }
-  throw new Error('Não encontrei as coordenadas dessa cidade. Tente novamente mais tarde.');
+async function geocodeCity(city,uf){
+  const url='https://nominatim.openstreetmap.org/search?'+new URLSearchParams({
+    q:`${city}, ${uf}, Brasil`,format:'jsonv2',countrycodes:'br',limit:'8',addressdetails:'1'
+  });
+  const r=await fetch(url,{headers:{Accept:'application/json'}});
+  if(!r.ok)throw Error('Serviço de localização temporariamente indisponível.');
+  const data=await r.json();
+  const target=city.toLocaleLowerCase('pt-BR');
+  const match=data.find(x=>{
+    const a=x.address||{};
+    const names=[a.city,a.town,a.village,a.municipality,a.county].filter(Boolean);
+    return names.some(n=>n.toLocaleLowerCase('pt-BR')===target);
+  })||data[0];
+  if(!match)throw Error('Não encontrei essa cidade. Tente outra ou pesquise apenas pelo estado.');
+  return {lat:Number(match.lat),lon:Number(match.lon)};
 }
 
-function makeQuery(lat, lon, segment) {
-  const clauses = tags[segment].map(([key,value]) =>
-    `nwr(around:20000,${lat},${lon})["${key}"="${value}"];`
-  ).join('\n');
+function buildCityQuery(lat,lon,segment){
+  const clauses=tags[segment].map(([k,v])=>`nwr(around:20000,${lat},${lon})["${k}"="${v}"];`).join('');
   return `[out:json][timeout:25];(${clauses});out center tags;`;
 }
 
+function buildStateQuery(uf,segment){
+  const clauses=tags[segment].map(([k,v])=>`nwr(area.searchArea)["${k}"="${v}"];`).join('');
+  return `[out:json][timeout:50];area["boundary"="administrative"]["admin_level"="4"]["ISO3166-2"="BR-${uf}"]->.searchArea;(${clauses});out center tags;`;
+}
 
-async function requestOverpass(query) {
-  const endpoints = [
+async function requestOverpass(query){
+  const endpoints=[
     'https://overpass.private.coffee/api/interpreter',
-    'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
     'https://overpass-api.de/api/interpreter'
   ];
-
-  let lastError = null;
-
-  for (const endpoint of endpoints) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 25000);
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        body: 'data=' + encodeURIComponent(query),
-        signal: controller.signal
-      });
-
-      if (response.status === 429) {
-        lastError = new Error('Limite de pesquisas atingido.');
-        continue;
-      }
-
-      if (!response.ok) {
-        lastError = new Error('Servidor respondeu HTTP ' + response.status);
-        continue;
-      }
-
-      const data = await response.json();
-
-      if (!Array.isArray(data.elements)) {
-        throw new Error('Resposta inválida da fonte de dados.');
-      }
-
-      return data.elements;
-    } catch (error) {
-      lastError = error;
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-
-  throw new Error(
-    'Não foi possível acessar nenhuma fonte gratuita agora. ' +
-    'Aguarde um pouco e tente novamente. ' +
-    (lastError ? 'Detalhe: ' + lastError.message : '')
-  );
-}
- {
-  const endpoints = [
-    'https://overpass-api.de/api/interpreter',
-    'https://overpass.kumi.systems/api/interpreter',
-    'https://overpass.private.coffee/api/interpreter'
-  ];
-  let lastError;
-  for (const endpoint of endpoints) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 28000);
-    try {
-      const response = await fetch(endpoint, {
+  let lastError=null;
+  for(const endpoint of endpoints){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),55000);
+    try{
+      const r=await fetch(endpoint,{
         method:'POST',
         headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-        body:'data=' + encodeURIComponent(query),
+        body:'data='+encodeURIComponent(query),
         signal:controller.signal
       });
-      if (!response.ok) throw new Error('Servidor de pesquisa ocupado (' + response.status + ')');
-      const data = await response.json();
-      if (!Array.isArray(data.elements)) throw new Error('Resposta de pesquisa inválida');
+      if(!r.ok)throw Error('Servidor respondeu HTTP '+r.status);
+      const data=await r.json();
+      if(!Array.isArray(data.elements))throw Error('Resposta inválida da fonte de empresas.');
       return data.elements;
-    } catch (e) {
-      lastError = e;
-    } finally {
-      clearTimeout(timer);
-    }
+    }catch(e){lastError=e}
+    finally{clearTimeout(timer)}
   }
-  throw new Error('As fontes gratuitas estão temporariamente indisponíveis. Tente novamente em alguns minutos. ' +
-    (lastError?.name === 'AbortError' ? '' : (lastError?.message || '')));
+  throw Error('As fontes gratuitas estão temporariamente indisponíveis. Aguarde alguns minutos e tente novamente. Detalhe: '+(lastError?.message||'sem resposta'));
 }
 
-function convertElement(el, city, segment) {
-  const t = el.tags || {};
-  const name = t.name || t.brand || t.operator;
-  if (!name) return null;
-
-  const lat = el.lat ?? el.center?.lat;
-  const lon = el.lon ?? el.center?.lon;
-  if (lat == null || lon == null) return null;
-
-  const phone = t['contact:phone'] || t.phone || t['contact:mobile'] || t.mobile || '';
-  const website = t['contact:website'] || t.website || '';
-  const email = t['contact:email'] || t.email || '';
-  const address = [
-    t['addr:street'],
-    t['addr:housenumber'],
-    t['addr:suburb'],
-    t['addr:city'] || city
+function convertElement(el,city,segment){
+  const t=el.tags||{};
+  const name=t.name||t.brand||t.operator;
+  const lat=el.lat??el.center?.lat,lon=el.lon??el.center?.lon;
+  if(!name||lat==null||lon==null)return null;
+  const phone=t['contact:phone']||t.phone||t['contact:mobile']||t.mobile||'';
+  const website=t['contact:website']||t.website||'';
+  const email=t['contact:email']||t.email||'';
+  const address=[
+    t['addr:street'],t['addr:housenumber'],t['addr:suburb'],
+    t['addr:city']||city||''
   ].filter(Boolean).join(', ');
-
   return {
-    osm_id: String(el.type) + '/' + String(el.id),
-    company_name: name,
-    city,
-    business_type: segment,
-    phone,
-    website: website ? (website.startsWith('http') ? website : 'https://' + website) : '',
-    email,
-    address,
-    lat:Number(lat),
-    lon:Number(lon)
+    osm_id:String(el.type)+'/'+String(el.id),
+    company_name:name,city:city||t['addr:city']||'',
+    business_type:segment,phone,website:website?(/^[a-z]+:/i.test(website)?website:'https://'+website):'',
+    email,address,lat:Number(lat),lon:Number(lon)
   };
 }
 
-async function searchCompanies() {
-  if (!currentUser) {
-    setStatus('Entre na sua conta para pesquisar.');
-    return;
-  }
-  if (searchInProgress) return;
+function score(c){return (c.phone?4:0)+(c.website?2:0)+(c.email?1:0)}
 
-  const uf = $('state').value;
-  const city = $('city').value;
-  const segment = $('segment').value;
-  const limit = Number($('limit').value);
+async function searchCompanies(){
+  if(!currentUser){setStatus('Entre na sua conta primeiro.');return}
+  if(searching)return;
+  const uf=$('state').value,city=$('city').value,segment=$('segment').value;
+  const limit=Number($('limit').value);
+  if(!uf){setStatus('Selecione um estado. A cidade é opcional.');return}
 
-  if (!uf || !city) {
-    setStatus('Selecione o estado e a cidade antes de pesquisar.');
-    return;
-  }
+  searching=true;
+  const thisSearch=++searchSequence;
+  $('searchBtn').disabled=true;
+  $('results').innerHTML='';
+  currentResults=[];
+  setStatus(city
+    ?`Pesquisando ${segment} em ${city}, ${uf}...`
+    :`Pesquisando ${segment} em todo o estado ${uf}. Essa busca pode demorar mais...`);
 
-  searchInProgress = true;
-  $('searchBtn').disabled = true;
-  $('results').innerHTML = '';
-  setStatus('Localizando a cidade e pesquisando empresas nas fontes gratuitas...');
-  $('resultsTitle').textContent = 'Resultados da pesquisa';
-  currentResults = [];
-
-  try {
-    const location = await geocodeCity(city, uf);
-    const query = makeQuery(location.lat, location.lon, segment);
-    const elements = await requestOverpass(query);
-    const unique = new Map();
-
-    for (const el of elements) {
-      const company = convertElement(el, city, segment);
-      if (!company) continue;
-      if (!unique.has(company.osm_id)) unique.set(company.osm_id, company);
+  try{
+    let query;
+    if(city){
+      const loc=await geocodeCity(city,uf);
+      query=buildCityQuery(loc.lat,loc.lon,segment);
+    }else{
+      query=buildStateQuery(uf,segment);
     }
 
-    const all = [...unique.values()];
-    all.sort((a,b) => {
-      const score = c => (c.phone ? 4 : 0) + (c.website ? 2 : 0) + (c.email ? 1 : 0);
-      return score(b) - score(a) || a.company_name.localeCompare(b.company_name);
+    const elements=await requestOverpass(query);
+    if(thisSearch!==searchSequence)return;
+
+    const unique=new Map();
+    for(const el of elements){
+      const c=convertElement(el,city,segment);
+      if(c&&!unique.has(c.osm_id))unique.set(c.osm_id,c);
+    }
+    const all=[...unique.values()].sort((a,b)=>score(b)-score(a)||a.company_name.localeCompare(b.company_name));
+    currentResults=all.slice(0,limit);
+    showResults(currentResults,`Encontradas: ${currentResults.length} empresas`);
+    markers.forEach(m=>map.removeLayer(m));
+    markers=[];
+
+    currentResults.forEach(c=>{
+      const m=L.marker([c.lat,c.lon]).bindPopup(
+        `<b>${escapeHTML(c.company_name)}</b><br>${escapeHTML(c.address||c.city||uf)}`
+      );
+      m.addTo(map);
+      markers.push(m);
     });
 
-    currentResults = all.slice(0, limit);
-    lastSearchKey = `${uf}|${city}|${segment}`;
-
-    showResults(currentResults, 'Empresas encontradas: ' + currentResults.length);
-
-    if (currentResults.length) {
-      const group = L.featureGroup(markers);
-      const validMarkers = currentResults.map(c =>
-        L.marker([c.lat,c.lon]).bindPopup(
-          `<b>${escapeHTML(c.company_name)}</b><br>${escapeHTML(c.address || c.city)}`
-        )
-      );
-      markers.forEach(m => map.removeLayer(m));
-      markers = validMarkers;
-      markers.forEach(m => m.addTo(map));
-      if (markers.length) map.fitBounds(L.featureGroup(markers).getBounds().pad(0.15), {maxZoom:14});
-    } else {
-      setStatus('Nenhuma empresa com nome foi encontrada nessa pesquisa. Tente outra categoria ou cidade.');
+    if(markers.length){
+      map.fitBounds(L.featureGroup(markers).getBounds().pad(.15),{maxZoom:13});
+      setStatus(`Pesquisa concluída. ${all.length} empresas disponíveis nos dados recebidos; exibindo até ${limit}. Os contatos podem estar incompletos.`);
+    }else{
+      setStatus('Nenhuma empresa com nome foi encontrada. Tente outro segmento ou cidade.');
     }
-  } catch (e) {
-    setStatus(e.message || 'Não foi possível pesquisar. Tente novamente.');
-  } finally {
-    searchInProgress = false;
-    $('searchBtn').disabled = false;
+  }catch(e){
+    if(thisSearch===searchSequence)setStatus(e.message||'Erro na busca. Tente novamente mais tarde.');
+  }finally{
+    searching=false;
+    $('searchBtn').disabled=false;
   }
 }
 
-function showResults(list, title) {
-  $('resultsTitle').textContent = title;
-  if (!list.length) {
-    $('results').innerHTML = '<p class="muted">Nenhuma empresa disponível para exibir.</p>';
+function showResults(list,title){
+  $('resultsTitle').textContent=title;
+  if(!list.length){
+    $('results').innerHTML='<p>Nenhuma empresa disponível para exibir.</p>';
     return;
   }
-
-  $('results').innerHTML = list.map((c,i) => {
-    const wa = whatsappURL(c.phone);
-    const tel = phoneURL(c.phone);
-    const phoneHtml = c.phone
-      ? `<p><b>Telefone:</b> ${escapeHTML(c.phone)}</p>`
-      : '<p>Telefone não informado</p>';
-    const waHtml = wa
-      ? `<a class="btn" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp / verificar</a>`
-      : '';
-    const telHtml = tel
-      ? `<a class="btn secondary" href="${tel}">Ligar</a>` : '';
-    const siteHtml = c.website
-      ? `<a class="btn secondary" href="${escapeHTML(c.website)}" target="_blank" rel="noopener noreferrer">Site</a>` : '';
-    const emailHtml = c.email
-      ? `<p><b>E-mail:</b> ${escapeHTML(c.email)}</p>` : '';
-    const addressHtml = c.address
-      ? `<p><b>Endereço:</b> ${escapeHTML(c.address)}</p>` : '';
+  $('results').innerHTML=list.map((c,i)=>{
+    const wa=whatsappURL(c.phone),tel=phoneURL(c.phone);
     return `<article class="company">
       <h3>${i+1}. ${escapeHTML(c.company_name)}</h3>
-      ${addressHtml}
-      ${phoneHtml}
-      ${emailHtml}
-      ${siteHtml}
+      <p><b>Endereço:</b> ${escapeHTML(c.address||c.city||'Não informado')}</p>
+      <p><b>Telefone:</b> ${escapeHTML(c.phone||'Não informado')}</p>
+      ${c.email?`<p><b>E-mail:</b> ${escapeHTML(c.email)}</p>`:''}
       <div class="actions">
-        ${waHtml}${telHtml}
+        ${wa?`<a class="btn" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp / verificar</a>`:''}
+        ${tel?`<a class="btn secondary" href="${tel}">Ligar</a>`:''}
+        ${c.website?`<a class="btn secondary" href="${escapeHTML(c.website)}" target="_blank" rel="noopener noreferrer">Site</a>`:''}
         <button class="secondary" onclick="saveLead(${i})">Salvar lead</button>
       </div>
     </article>`;
   }).join('');
 }
 
-async function saveLead(index) {
-  if (!currentUser) {
-    alert('Entre na sua conta primeiro.');
-    return;
-  }
-  const c = currentResults[index];
-  if (!c) return;
-
-  const payload = {
-    user_id:currentUser.id,
-    company_name:c.company_name,
-    country:'Brasil',
-    city:c.city,
-    business_type:c.business_type,
-    website:c.website || null,
-    email:c.email || null,
-    phone:c.phone || null
-  };
-
-  try {
-    const {error} = await db.from('leads').insert(payload);
-    if (error) throw error;
-    alert('Lead salvo na sua conta!');
-  } catch (e) {
-    alert('Não foi possível salvar o lead: ' + e.message);
-  }
+function normalizePhone(phone){
+  let n=String(phone||'').replace(/\D/g,'');
+  if(!n)return '';
+  if(n.startsWith('00'))n=n.slice(2);
+  if(n.length===10||n.length===11)n='55'+n;
+  return n;
+}
+function whatsappURL(phone){
+  const n=normalizePhone(phone);
+  return n?'https://wa.me/'+n:'';
+}
+function phoneURL(phone){
+  const n=String(phone||'').replace(/[^\d+]/g,'');
+  return n?'tel:'+n:'';
 }
 
-async function loadLeads() {
-  if (!currentUser) return;
-  setStatus('Carregando seus leads salvos...');
-  try {
-    const {data,error} = await db.from('leads')
+async function saveLead(index){
+  if(!currentUser){alert('Entre na sua conta primeiro.');return}
+  const c=currentResults[index];
+  if(!c)return;
+  try{
+    const {error}=await db.from('leads').insert({
+      user_id:currentUser.id,
+      company_name:c.company_name,
+      country:'Brasil',
+      city:c.city||$('state').value,
+      business_type:c.business_type,
+      website:c.website||null,
+      email:c.email||null,
+      phone:c.phone||null
+    });
+    if(error)throw error;
+    alert('Lead salvo com sucesso!');
+  }catch(e){alert('Não foi possível salvar o lead: '+e.message)}
+}
+
+async function loadLeads(){
+  if(!currentUser)return;
+  setStatus('Carregando seus leads...');
+  try{
+    const {data,error}=await db.from('leads')
       .select('company_name,country,city,business_type,website,email,phone')
       .eq('user_id',currentUser.id)
       .order('company_name',{ascending:true})
       .limit(500);
-    if (error) throw error;
-
-    const leads = (data || []).map(c => ({
-      ...c, address:c.city || '', lat:null, lon:null
-    }));
-
-    $('resultsTitle').textContent = 'Meus leads salvos (' + leads.length + ')';
-    if (!leads.length) {
-      $('results').innerHTML = '<p class="muted">Você ainda não salvou nenhum lead.</p>';
+    if(error)throw error;
+    $('resultsTitle').textContent=`Meus leads salvos (${(data||[]).length})`;
+    if(!data?.length){
+      $('results').innerHTML='<p>Você ainda não salvou nenhum lead.</p>';
       setStatus('');
       return;
     }
-
-    $('results').innerHTML = leads.map(c => {
-      const wa = whatsappURL(c.phone);
-      const tel = phoneURL(c.phone);
+    $('results').innerHTML=data.map(c=>{
+      const wa=whatsappURL(c.phone),tel=phoneURL(c.phone);
       return `<article class="company">
         <h3>${escapeHTML(c.company_name)}</h3>
-        <p>${escapeHTML(c.business_type || 'Empresa')} · ${escapeHTML(c.city || '')}</p>
-        <p>${c.phone ? 'Telefone: ' + escapeHTML(c.phone) : 'Telefone não informado'}</p>
-        ${c.email ? '<p>E-mail: ' + escapeHTML(c.email) + '</p>' : ''}
+        <p>${escapeHTML(c.business_type||'Empresa')} · ${escapeHTML(c.city||'')}</p>
+        <p><b>Telefone:</b> ${escapeHTML(c.phone||'Não informado')}</p>
+        ${c.email?`<p><b>E-mail:</b> ${escapeHTML(c.email)}</p>`:''}
         <div class="actions">
-          ${wa ? `<a class="btn" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp / verificar</a>` : ''}
-          ${tel ? `<a class="btn secondary" href="${tel}">Ligar</a>` : ''}
-          ${c.website ? `<a class="btn secondary" href="${escapeHTML(c.website)}" target="_blank" rel="noopener noreferrer">Site</a>` : ''}
+          ${wa?`<a class="btn" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp / verificar</a>`:''}
+          ${tel?`<a class="btn secondary" href="${tel}">Ligar</a>`:''}
+          ${c.website?`<a class="btn secondary" href="${escapeHTML(c.website)}" target="_blank" rel="noopener noreferrer">Site</a>`:''}
         </div>
       </article>`;
     }).join('');
     setStatus('');
-  } catch (e) {
-    setStatus('Erro ao carregar leads: ' + e.message);
-  }
+  }catch(e){setStatus('Erro ao carregar leads: '+e.message)}
 }
 
-async function start() {
-  const {data,error} = await db.auth.getSession();
-  if (error) {
-    $('authStatus').textContent = 'Não foi possível verificar a sessão: ' + error.message;
-    return;
-  }
+async function start(){
+  const {data,error}=await db.auth.getSession();
+  if(error){$('authStatus').textContent='Erro ao verificar sessão: '+error.message;return}
   await updateSession(data.session);
-
-  db.auth.onAuthStateChange((_event, session) => {
-    setTimeout(() => updateSession(session), 0);
+  db.auth.onAuthStateChange((_event,session)=>{
+    setTimeout(()=>updateSession(session),0);
   });
 }
-
 start();
 </script>
 </body>
